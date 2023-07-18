@@ -61,29 +61,10 @@ public extension UIImage{
         let width = cgImage.width
         let height = cgImage.height
         
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bytesPerRow = cgImage.bytesPerRow
-        let bytesPerPixel = bytesPerPixel ?? bytesPerRow / width;
-        let bitsPerComponent = cgImage.bitsPerComponent
-        
-        var imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height * bytesPerPixel)
-        defer {
-            imageData.deallocate()
-        }
-        
-        guard let imageContext = CGContext(data: imageData,
-                                     width: width,
-                                     height: height,
-                                     bitsPerComponent: bitsPerComponent,
-                                     bytesPerRow: bytesPerRow,
-                                     space: colorSpace,
-                                     bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
-        )
-        else {
-            throw ImageErrors.failedToCreateContext(localizedDescription: "Context Creation failed! Please generate an issue in the github repository with the image.")
-        }
-        
-        imageContext.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        var (imageContext, imageData, bytesPerPixel) = try createContextAndData(cgImage: cgImage,
+                                                           bytesPerPixel: bytesPerPixel,
+                                                           width: width,
+                                                           height: height)
         
         modifyImageData(&imageData,
                         bayerSize: bayerSize,
@@ -94,42 +75,14 @@ public extension UIImage{
         
         guard let outputCGImage = imageContext.makeImage()  else {
             throw ImageErrors
-            .failedToRetriveCGImage(localizedDescription: "makeimage Failed to create an CGImage! Please generate an issue in the github repository with the image.")
+            .failedToRetriveCGImage(localizedDescription: "makeImage Failed to create an CGImage! Please generate an issue in the github repository with the image.")
             
         }
         
         return UIImage(cgImage: outputCGImage)
     }
     
-    /**
-        This is a helper function for the Ordered Dither that loops through the image pixels and applies the modification.
-        All parameters are carried over from the ordered dithering method.
-        
-     */
-    private func modifyImageData(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, width: Int, height: Int, spread: Double, bytesPerPixel: Int){
-        for y in 0..<height{
-            for x in 0..<width{
-                let index = (y * width + x) * bytesPerPixel
-                
-                let bayerFactor = bayerSize.rawValue
-                let bayerMatrixResult = bayerSize.getBayerMatrix()[y % bayerFactor][x % bayerFactor]
-                let bayerValue = Double(bayerMatrixResult) - 0.5
-                
-                let oldR = imageData[index]
-                let oldG = imageData[index + 1]
-                let oldB = imageData[index + 2]
-                
-                let newR = Int(Double(oldR) + spread * bayerValue)
-                let newG = Int(Double(oldG) + spread * bayerValue)
-                let newB = Int(Double(oldB) + spread * bayerValue)
-                
-                imageData[index] = UInt8(clamping: newR)
-                imageData[index + 1] = UInt8(clamping: newG)
-                imageData[index + 2] = UInt8(clamping: newB)
-                
-            }
-        }
-    }
+
     
 }
 
