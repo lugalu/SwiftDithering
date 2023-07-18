@@ -7,6 +7,9 @@
 
 import UIKit
 
+/**
+ This enum contains all the information regarding Bayer matrices from size to matrix values.
+ */
 public enum BayerSizes: Int{
     case bayer2x2 = 2
     case bayer4x4 = 4
@@ -43,6 +46,15 @@ public enum BayerSizes: Int{
 }
 
 public extension UIImage{
+    /**
+        Applies Ordered Dithering, also known as Bayer dithering to the image,  this dither support colors on the RGB space.
+        The image must contain an CGImage to be processed, and this method can cause crashes that Cannot be throw becasue of the draw function.
+        - Parameters:
+          - bayerSize: The Matrix size used to calculate the color difference;
+          - spread: Max distance between the calculated value and the original value by default  equals to 1.0, Warning: the value isn't clamped so going above the threshold can cause artifacts;
+          - bytesPerPixel: The image bytes can be tweaked for different results, going too low or too high can cause crashes, the default value is calculated between the division of bytesPerRow/Width
+        - Returns: UIImage with the dithering applied
+     */
     func applyOrderedDither(withSize bayerSize: BayerSizes, spread: Double = 1.0, bytesPerPixel: Int? = nil) throws -> UIImage{
         guard let cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
@@ -89,18 +101,24 @@ public extension UIImage{
         return UIImage(cgImage: outputCGImage)
     }
     
+    /**
+        This is a helper function for the Ordered Dither that loops through the image pixels and applies the modification.
+        All parameters are carried over from the ordered dithering method.
+        
+     */
     private func modifyImageData(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, width: Int, height: Int, spread: Double, bytesPerPixel: Int){
         for y in 0..<height{
             for x in 0..<width{
                 let index = (y * width + x) * bytesPerPixel
-                let bayerMatrix = bayerSize.getBayerMatrix()
-                let bayerSize = bayerSize.rawValue
+                
+                let bayerFactor = bayerSize.rawValue
+                let bayerMatrixResult = bayerSize.getBayerMatrix()[y % bayerFactor][x % bayerFactor]
+                let bayerValue = Double(bayerMatrixResult) - 0.5
                 
                 let oldR = imageData[index]
                 let oldG = imageData[index + 1]
                 let oldB = imageData[index + 2]
                 
-                let bayerValue = Double(bayerMatrix[y % bayerSize][x % bayerSize]) - 0.5
                 let newR = Int(Double(oldR) + spread * bayerValue)
                 let newG = Int(Double(oldG) + spread * bayerValue)
                 let newB = Int(Double(oldB) + spread * bayerValue)
