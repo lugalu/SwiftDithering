@@ -55,6 +55,7 @@ public extension UIImage{
           - bytesPerPixel: The image bytes can be tweaked for different results, going too low or too high can cause crashes, the default value is calculated between the division of bytesPerRow/Width
         - Returns: UIImage with the dithering applied
      */
+    /// - Tag: applyOrderedDither
     func applyOrderedDither(withSize bayerSize: BayerSizes, spread: Double = 1.0, bytesPerPixel: Int? = nil) throws -> UIImage{
         guard let cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
@@ -66,7 +67,7 @@ public extension UIImage{
                                                            width: width,
                                                            height: height)
         
-        modifyImageData(&imageData,
+        modifyOrderedImageData(&imageData,
                         bayerSize: bayerSize,
                         width: width,
                         height: height,
