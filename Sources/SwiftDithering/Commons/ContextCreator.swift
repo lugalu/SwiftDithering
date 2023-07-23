@@ -11,6 +11,7 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
     let colorSpace = CGColorSpaceCreateDeviceRGB()
     let bytesPerRow = cgImage.bytesPerRow
     let bytesPerPixel = bytesPerPixel ?? bytesPerRow / width;
+    print(bytesPerPixel)
     let bitsPerComponent = cgImage.bitsPerComponent
     
     var imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height * bytesPerPixel)
@@ -21,7 +22,7 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
                                  bitsPerComponent: bitsPerComponent,
                                  bytesPerRow: bytesPerRow,
                                  space: colorSpace,
-                                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
+                                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
     )
     else {
         throw ImageErrors.failedToCreateContext(localizedDescription: "Context Creation failed! Please generate an issue in the github repository with the image.")
