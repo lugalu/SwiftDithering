@@ -11,4 +11,5 @@ public enum ImageErrors: Error{
     case failedToRetriveCGImage(localizedDescription:String)
     case failedToCreateContext(localizedDescription:String)
     case failedToOutputImage(localizedDescription:String)
+    case failedToConvertimage(localizedDescription:String)
 }

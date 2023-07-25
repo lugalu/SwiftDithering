@@ -57,7 +57,9 @@ public extension UIImage{
      */
     /// - Tag: applyOrderedDither
     func applyOrderedDither(withSize bayerSize: BayerSizes, spread: Double = 1.0, bytesPerPixel: Int? = nil) throws -> UIImage{
-        guard let cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
+        guard let cgImageTemp = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
+        
+        let cgImage = try convertColorSpace(cgImageTemp)
         
         let width = cgImage.width
         let height = cgImage.height
@@ -66,7 +68,7 @@ public extension UIImage{
                                                            bytesPerPixel: bytesPerPixel,
                                                            width: width,
                                                            height: height)
-        
+
         modifyOrderedImageData(&imageData,
                         bayerSize: bayerSize,
                         width: width,
