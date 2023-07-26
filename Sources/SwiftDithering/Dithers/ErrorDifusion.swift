@@ -24,7 +24,10 @@ public extension UIImage{
      */
     /// - Tag: applyErrorDifusion
     func applyErrorDifusion(withType diffusionType: ErrorDifusionTypes, isColored: Bool = false, nearestFactor: Int = 2) throws -> UIImage{
-        guard let cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available")}
+        guard let cgImageTemp = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available")}
+        
+        let cgImage = try convertColorSpace(cgImageTemp)
+        
         let width = cgImage.width
         let height = cgImage.height
         

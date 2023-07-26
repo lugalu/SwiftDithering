@@ -28,13 +28,13 @@ internal func assingNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, in
 }
 
 internal func findClosestPallete(_ oldColor: originalColor, isColored: Bool, nearestFactor: Int) -> colorTuple{
-    if !isColored{
-        let r = Int(oldColor.r/255)
-        let g = Int(oldColor.g/255)
-        let b = Int(oldColor.b/255)
-        return (r, g, b)
-    }
-    var nearestFactor = UInt8(clamping: nearestFactor - 1)
+//    if !isColored{
+//        let r = Int(round(Double(oldColor.r)/255.0))
+//        let g = Int(round(Double(oldColor.g)/255.0))
+//        let b = Int(round(Double(oldColor.b)/255.0))
+//        return (r, g, b)
+//    }
+    var nearestFactor = UInt8(clamping: nearestFactor)
     
     var r =  Int(round(Double(oldColor.r) * Double(nearestFactor))) / Int(nearestFactor)
     var g =  Int(round(Double(oldColor.g) * Double(nearestFactor))) / Int(nearestFactor)
@@ -46,7 +46,7 @@ internal func findClosestPallete(_ oldColor: originalColor, isColored: Bool, nea
 internal func makeQuantization(_ colorA: colorTuple, colorB: colorTuple) -> colorTuple{
     let newTuple = (r: colorA.r - colorB.r,
                     g: colorA.g - colorB.g,
-                    b: colorA.b - colorB.g)
+                    b: colorA.b - colorB.b)
     return newTuple
 }
 
@@ -58,12 +58,32 @@ internal func makeQuantization(_ colorA: originalColor, colorB: colorTuple) -> c
     return makeQuantization((r,g,b), colorB: colorB)
 }
 
-internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_ quantization: colorTuple, x: Int, y: Int, width: Int, bytesPerPixel: Int, multiplier: Int = 7, divisor: Int = 16){
-    let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-    imageData[index] += UInt8(clamping: quantization.r * multiplier / divisor)
-    imageData[index + 1] += UInt8(clamping: quantization.g * multiplier / divisor)
-    imageData[index + 2] += UInt8(clamping: quantization.b * multiplier / divisor)
+internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_ quantization: colorTuple, x: Int, y: Int, width: Int, bytesPerPixel: Int, outerOverflow: (r: Int?, g: Int?, b: Int?)? = nil, multiplier: Int = 7, divisor: Int = 16) -> (r: Int?, g: Int?, b: Int?) {
     
+    let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
+    var overflow: (r: Int?, g: Int?, b: Int?) = (nil,nil,nil)
+    
+    var r = (Int(imageData[index]) + quantization.r * multiplier / divisor) + (outerOverflow?.r ?? 0)
+    if r > 255 {
+        overflow.r = r - 255
+        r = 255
+    }
+    
+    var g = (Int(imageData[index + 1]) + quantization.g * multiplier / divisor) + (outerOverflow?.g ?? 0)
+    if g > 255 {
+        overflow.g = g - 255
+        g = 255
+    }
+    
+    var b = (Int(imageData[index + 2]) + quantization.b * multiplier / divisor) + (outerOverflow?.b ?? 0)
+    if b > 255 {
+        overflow.b = b - 255
+        b = 255
+    }
+    
+    assingNewColorsTo(imageData: &imageData, index: index, colors: (r, g, b))
+    
+    return overflow
 }
 
 

@@ -36,18 +36,32 @@ internal func modifyOrderedImageData(_ imageData: inout UnsafeMutablePointer<UIn
  */
 internal func modifyFloydImageData(_ imageData: inout UnsafeMutablePointer<UInt8>, isColored: Bool, width: Int, height: Int, bytesPerPixel: Int, nearestFactor: Int){
     for y in 0..<height{
+        var overflow: (r:Int?,g:Int?,b:Int?) = (nil, nil, nil)
+        
         for x in 0..<width{
             let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-            var oldPixel = getRgbFor(index: index, inData: imageData)
-            var newPixel = findClosestPallete(oldPixel, isColored: isColored,nearestFactor: nearestFactor)
+            let oldPixel = getRgbFor(index: index, inData: imageData)
+            let newPixel = findClosestPallete(oldPixel, isColored: isColored,nearestFactor: nearestFactor)
             
             assingNewColorsTo(imageData: &imageData, index: index, colors: newPixel)
+            
             let quantization = makeQuantization(oldPixel, colorB: newPixel)
             
-            applyQuantization(&imageData, quantization, x: x + 1, y: y, width: width, bytesPerPixel: bytesPerPixel)
-            applyQuantization(&imageData, quantization, x: x - 1, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, multiplier: 3)
-            applyQuantization(&imageData, quantization, x: x, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, multiplier: 5)
-            applyQuantization(&imageData, quantization, x: x + 1, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, multiplier: 1)
+            if x + 1 < width{
+                overflow = applyQuantization(&imageData, quantization, x: x + 1, y: y, width: width, bytesPerPixel: bytesPerPixel)
+            }
+            if y + 1 < width {
+                if x - 1 >= 0 {
+                    overflow = applyQuantization(&imageData, quantization, x: x - 1, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, outerOverflow: overflow, multiplier: 3)
+                }
+                
+                overflow = applyQuantization(&imageData, quantization, x: x, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, outerOverflow: overflow, multiplier: 5)
+                
+                if x + 1 < width{
+                    _ = applyQuantization(&imageData, quantization, x: x + 1, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, outerOverflow: overflow, multiplier: 1)
+                }
+            }
+            
             
         }
     }
