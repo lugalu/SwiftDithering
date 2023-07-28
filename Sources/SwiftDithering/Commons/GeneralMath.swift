@@ -32,12 +32,6 @@ internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, in
 }
 
 internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) -> colorTuple{
-//    if !isColored{
-//        let r = Int(round(Double(oldColor.r)/255.0))
-//        let g = Int(round(Double(oldColor.g)/255.0))
-//        let b = Int(round(Double(oldColor.b)/255.0))
-//        return (r, g, b)
-//    }
     let nearestFactor = UInt8(clamping: nearestFactor)
     
     let r =  Int(round(Double(oldColor.r) * Double(nearestFactor))) / Int(nearestFactor)
@@ -48,7 +42,7 @@ internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) 
 }
 
 internal func quantitizeGrayScale(pixelColor: UInt8) -> UInt8{
-    return pixelColor > 128 ? 255 : 0
+    return pixelColor < 128 ? 0 : 255
 }
 
 internal func makeQuantization(_ colorA: colorTuple, colorB: colorTuple) -> colorTuple{
@@ -69,16 +63,10 @@ internal func makeQuantization(_ colorA: originalColor, colorB: colorTuple) -> c
 internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_ quantization: colorTuple, x: Int, y: Int, width: Int, bytesPerPixel: Int, multiplier: Int = 7, divisor: Int = 16){
     let errorBias: Double = Double(multiplier) / Double(divisor)
     let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-    
-    
-    var r = Int(round(Double(imageData[index]) + Double(quantization.r) * errorBias))
-    var g = Int(round(Double(imageData[index + 1]) + Double(quantization.g) * errorBias))
-    var b = Int(round(Double(imageData[index + 2]) + Double(quantization.b) * errorBias))
 
-    r = clamp(min: 0, value: r, max: 255)
-    g = clamp(min: 0, value: g, max: 255)
-    b = clamp(min: 0, value: b, max: 255)
-    
+    let r = Int(round(Double(imageData[index]) + Double(quantization.r) * errorBias))
+    let g = Int(round(Double(imageData[index + 1]) + Double(quantization.g) * errorBias))
+    let b = Int(round(Double(imageData[index + 2]) + Double(quantization.b) * errorBias))
 
     assignNewColorsTo(imageData: &imageData, index: index, colors: (r, g, b))
     

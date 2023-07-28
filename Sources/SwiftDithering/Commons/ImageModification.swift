@@ -31,42 +31,7 @@ internal func modifyOrderedImageData(_ imageData: inout UnsafeMutablePointer<UIn
     }
 }
 
-/**
-    Loops through all the pixels on screen then calculate and applies the color for multiple pixels, all is done via the pointer so no need for returns all parameters are carried over from [apply Error dither](x-source-tag://applyErrorDifusion) when the type is set to Floyd-Steinberg.
- */
-internal func modifyFloydImageData(_ imageData: inout UnsafeMutablePointer<UInt8>, grayImageData: UnsafeMutablePointer<UInt8>, width: Int, height: Int, bytesPerPixel: Int, grayBytesPerPixel: Int, nearestFactor: Int){
-    
-    for y in 0..<height{
-        for x in 0..<width{
-            let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-            let grayIndex = indexCalculator(x: x, y: y, width: width, bytesPerPixel: grayBytesPerPixel)
-            
-            let error = imageData[index]
-//            let oldPixel = getRgbFor(index: index, inData: imageData)
-//            let newPixel = findClosestPallete(oldPixel, isColored: isColored,nearestFactor: nearestFactor)
-//
-//            assingNewColorsTo(imageData: &imageData, index: index, colors: newPixel)
-//
-//            let quantization = makeQuantization(oldPixel, colorB: newPixel)
-//
-//            if x + 1 < width{
-//                overflow = applyQuantization(&imageData, quantization, x: x + 1, y: y, width: width, bytesPerPixel: bytesPerPixel)
-//            }
-//            if y + 1 < width {
-//                if x - 1 >= 0 {
-//                    overflow = applyQuantization(&imageData, quantization, x: x - 1, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, outerOverflow: overflow, multiplier: 3)
-//                }
-//
-//                overflow = applyQuantization(&imageData, quantization, x: x, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, outerOverflow: overflow, multiplier: 5)
-//
-//                if x + 1 < width{
-//                    _ = applyQuantization(&imageData, quantization, x: x + 1, y: y + 1, width: width, bytesPerPixel: bytesPerPixel, outerOverflow: overflow, multiplier: 1)
-//                }
-//            }
-            
-        }
-    }
-}
+
 
 //TODO: Error Difusion Stucki type
 //TODO: others

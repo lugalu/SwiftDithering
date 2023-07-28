@@ -27,15 +27,12 @@ public extension UIImage{
         guard let cgImageTemp = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available")}
         
         let cgImage = try convertColorSpaceToRGB(cgImageTemp)
-        
+    
         let width = cgImage.width
         let height = cgImage.height
-
         
         let quantizatorImage = try convertColorSpaceToGrayScale(cgImage)
         let (_,quantitizedImageData, quantitizedBytesPerPixel) = try prepareQuantization(grayScaleImage: quantizatorImage)
-        let rgbQuantizator = try convertColorSpaceToRGB(quantizatorImage)
-        
         var (imageContext, imageData, bytesPerPixel) = try createContextAndData(cgImage: cgImage, width: width, height: height)
         
         defer {
@@ -45,8 +42,7 @@ public extension UIImage{
 
         switch diffusionType {
         case .floydSteinberg:
-            //modifyFloydImageData(&imageData, grayImageData: quantitizedImageData, width: width, height: height, bytesPerPixel: bytesPerPixel, grayBytesPerPixel: quantitizedBytesPerPixel, nearestFactor: nearestFactor)
-            floydDither(finalImageData: &imageData, quantitizedImageData: quantitizedImageData, width: width, height: height, finalImageBytesPerPixel: bytesPerPixel, quantitizedBytesPerPixel: quantitizedBytesPerPixel)
+            floydDither(finalImageData: &imageData, quantitizedImageData: quantitizedImageData, width: width, height: height, finalImageBytesPerPixel: bytesPerPixel, quantitizedBytesPerPixel: quantitizedBytesPerPixel, nearestFactor: nearestFactor)
         case .stucki:
             //TODO: Implement Stucki type.
             return UIImage(systemName: "pencil")!
@@ -59,12 +55,13 @@ public extension UIImage{
 
         }
         
-        
-        
         return UIImage(cgImage: outputCGImage)
     }
     
-    func floydDither(finalImageData: inout UnsafeMutablePointer<UInt8>, quantitizedImageData: UnsafeMutablePointer<UInt8>, width: Int, height: Int, finalImageBytesPerPixel finalBytesPerPixel: Int, quantitizedBytesPerPixel: Int){
+    /**
+        Loops through all the pixels on screen then calculate and applies the color for multiple pixels, all is done via the pointer so no need for returns all parameters are carried over from [apply Error dither](x-source-tag://applyErrorDifusion) when the type is set to Floyd-Steinberg.
+     */
+    private func floydDither(finalImageData: inout UnsafeMutablePointer<UInt8>, quantitizedImageData: UnsafeMutablePointer<UInt8>, width: Int, height: Int, finalImageBytesPerPixel finalBytesPerPixel: Int, quantitizedBytesPerPixel: Int, nearestFactor: Int){
         
         for y in 0..<height{
             for x in 0..<width{
@@ -72,17 +69,19 @@ public extension UIImage{
                 let quantitizedIndex = indexCalculator(x: x, y: y, width: width, bytesPerPixel: quantitizedBytesPerPixel)
                 let quantitizedValue = Int(quantitizedImageData[quantitizedIndex])
                 
-                if quantitizedValue != 0 && quantitizedValue != 255 {
-                    
-                }
+                let oldColor = (finalImageData[finalImageIndex],
+                                finalImageData[finalImageIndex + 1],
+                                finalImageData[finalImageIndex + 2])
                 
-                var error = (
-                    r: Int(finalImageData[finalImageIndex]) - quantitizedValue,
-                    g: Int(finalImageData[finalImageIndex + 1]) - quantitizedValue,
-                    b: Int(finalImageData[finalImageIndex + 2]) - quantitizedValue
+                let newColor = findClosestPallete(oldColor, nearestFactor: nearestFactor)
+                
+                let error = (
+                    r: quantitizedValue - newColor.r,
+                    g: quantitizedValue - newColor.g,
+                    b: quantitizedValue - newColor.b
                 )
                 
-                assignNewColorsTo(imageData: &finalImageData, index: finalImageIndex, colors: (error.r,error.g,error.b))
+                assignNewColorsTo(imageData: &finalImageData, index: finalImageIndex, colors: newColor)
                 
                 if x + 1 < width{
                     applyQuantization(&finalImageData, error, x: x + 1, y: y, width: width, bytesPerPixel: finalBytesPerPixel)
@@ -100,8 +99,6 @@ public extension UIImage{
                 
             }
         }
-        
-        
         
     }
     
