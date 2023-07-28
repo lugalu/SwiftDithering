@@ -16,7 +16,8 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
     let bytesPerPixel = bytesPerPixel ?? bytesPerRow / width
     let bitsPerComponent = cgImage.bitsPerComponent
     
-    var imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height * bytesPerPixel)
+    
+    let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height * bytesPerPixel)
     
     guard let imageContext = CGContext(data: imageData,
                                  width: width,
@@ -34,7 +35,7 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
     return (imageContext, imageData, bytesPerPixel)
 }
 
-func convertColorSpace(_ cgImage: CGImage) throws -> CGImage{
+func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
     guard
         let sourceImageFormat = vImage_CGImageFormat(cgImage: cgImage),
         let rgbDestinationImageFormat = vImage_CGImageFormat(
@@ -45,15 +46,39 @@ func convertColorSpace(_ cgImage: CGImage) throws -> CGImage{
         throw ImageErrors.failedToConvertimage(localizedDescription: "Unable to initialize")
     }
    
-    let converter = try vImageConverter.make(sourceFormat: sourceImageFormat, destinationFormat: rgbDestinationImageFormat)
+    let result = try createCGImage(source: sourceImageFormat, destination: rgbDestinationImageFormat, image: cgImage)
     
-    let sourceBuffer = try vImage_Buffer(cgImage: cgImage)
+    return result
+
+}
+
+func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
+    guard
+        let sourceImageFormat = vImage_CGImageFormat(cgImage: cgImage),
+        let grayDestinationBuffer = vImage_CGImageFormat(
+            bitsPerComponent: 8,
+            bitsPerPixel: 8 * 2,
+            colorSpace: CGColorSpaceCreateDeviceGray(),
+            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)) else {
+        throw ImageErrors.failedToConvertimage(localizedDescription: "Unable to initialize")
+    }
+
+    let result = try createCGImage(source: sourceImageFormat, destination: grayDestinationBuffer, image: cgImage)
+    
+    return result
+}
+
+private func createCGImage(source: vImage_CGImageFormat, destination: vImage_CGImageFormat, image: CGImage) throws -> CGImage {
+    
+    let converter = try vImageConverter.make(sourceFormat: source, destinationFormat: destination)
+    
+    let sourceBuffer = try vImage_Buffer(cgImage: image)
     var destinationBuffer = try vImage_Buffer( size: sourceBuffer.size,
-                                               bitsPerPixel: rgbDestinationImageFormat.bitsPerPixel)
+                                               bitsPerPixel: destination.bitsPerPixel)
     
     try converter.convert(source: sourceBuffer, destination: &destinationBuffer)
     
-    let result = try destinationBuffer.createCGImage(format: rgbDestinationImageFormat)
+    let result = try destinationBuffer.createCGImage(format: destination)
     
     defer{
         sourceBuffer.free()
@@ -61,5 +86,4 @@ func convertColorSpace(_ cgImage: CGImage) throws -> CGImage{
     }
     
     return result
-
 }

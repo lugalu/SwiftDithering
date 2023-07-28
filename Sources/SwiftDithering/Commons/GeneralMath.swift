@@ -5,12 +5,16 @@
 //  Created by Lugalu on 18/07/23.
 //
 
-import Foundation
+import UIKit
 typealias colorTuple = (r: Int, g: Int, b: Int)
 typealias originalColor = (r: UInt8, g: UInt8, b: UInt8)
 
 internal func indexCalculator(x: Int, y: Int, width: Int, bytesPerPixel: Int) -> Int{
     return (y * width + x) * bytesPerPixel
+}
+
+func clamp<T: Comparable & Numeric>(min minValue:T, value:T, max maxValue:T) -> T {
+    return min(maxValue, max(minValue,value))
 }
 
 internal func getRgbFor( index: Int, inData data: UnsafeMutablePointer<UInt8>) -> originalColor{
@@ -21,26 +25,30 @@ internal func getRgbFor( index: Int, inData data: UnsafeMutablePointer<UInt8>) -
     return (r, g, b)
 }
 
-internal func assingNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, colors: colorTuple){
+internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, colors: colorTuple){
     imageData[index] = UInt8(clamping: colors.r)
     imageData[index + 1] = UInt8(clamping: colors.g)
     imageData[index + 2] = UInt8(clamping: colors.b)
 }
 
-internal func findClosestPallete(_ oldColor: originalColor, isColored: Bool, nearestFactor: Int) -> colorTuple{
+internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) -> colorTuple{
 //    if !isColored{
 //        let r = Int(round(Double(oldColor.r)/255.0))
 //        let g = Int(round(Double(oldColor.g)/255.0))
 //        let b = Int(round(Double(oldColor.b)/255.0))
 //        return (r, g, b)
 //    }
-    var nearestFactor = UInt8(clamping: nearestFactor)
+    let nearestFactor = UInt8(clamping: nearestFactor)
     
-    var r =  Int(round(Double(oldColor.r) * Double(nearestFactor))) / Int(nearestFactor)
-    var g =  Int(round(Double(oldColor.g) * Double(nearestFactor))) / Int(nearestFactor)
-    var b =  Int(round(Double(oldColor.b) * Double(nearestFactor))) / Int(nearestFactor)
+    let r =  Int(round(Double(oldColor.r) * Double(nearestFactor))) / Int(nearestFactor)
+    let g =  Int(round(Double(oldColor.g) * Double(nearestFactor))) / Int(nearestFactor)
+    let b =  Int(round(Double(oldColor.b) * Double(nearestFactor))) / Int(nearestFactor)
     
     return (r,g,b)
+}
+
+internal func quantitizeGrayScale(pixelColor: UInt8) -> UInt8{
+    return pixelColor > 128 ? 255 : 0
 }
 
 internal func makeQuantization(_ colorA: colorTuple, colorB: colorTuple) -> colorTuple{
@@ -58,33 +66,40 @@ internal func makeQuantization(_ colorA: originalColor, colorB: colorTuple) -> c
     return makeQuantization((r,g,b), colorB: colorB)
 }
 
-internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_ quantization: colorTuple, x: Int, y: Int, width: Int, bytesPerPixel: Int, outerOverflow: (r: Int?, g: Int?, b: Int?)? = nil, multiplier: Int = 7, divisor: Int = 16) -> (r: Int?, g: Int?, b: Int?) {
-    
+internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_ quantization: colorTuple, x: Int, y: Int, width: Int, bytesPerPixel: Int, multiplier: Int = 7, divisor: Int = 16){
+    let errorBias: Double = Double(multiplier) / Double(divisor)
     let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-    var overflow: (r: Int?, g: Int?, b: Int?) = (nil,nil,nil)
     
-    var r = (Int(imageData[index]) + quantization.r * multiplier / divisor) + (outerOverflow?.r ?? 0)
-    if r > 255 {
-        overflow.r = r - 255
-        r = 255
-    }
     
-    var g = (Int(imageData[index + 1]) + quantization.g * multiplier / divisor) + (outerOverflow?.g ?? 0)
-    if g > 255 {
-        overflow.g = g - 255
-        g = 255
-    }
+    var r = Int(round(Double(imageData[index]) + Double(quantization.r) * errorBias))
+    var g = Int(round(Double(imageData[index + 1]) + Double(quantization.g) * errorBias))
+    var b = Int(round(Double(imageData[index + 2]) + Double(quantization.b) * errorBias))
+
+    r = clamp(min: 0, value: r, max: 255)
+    g = clamp(min: 0, value: g, max: 255)
+    b = clamp(min: 0, value: b, max: 255)
     
-    var b = (Int(imageData[index + 2]) + quantization.b * multiplier / divisor) + (outerOverflow?.b ?? 0)
-    if b > 255 {
-        overflow.b = b - 255
-        b = 255
-    }
+
+    assignNewColorsTo(imageData: &imageData, index: index, colors: (r, g, b))
     
-    assingNewColorsTo(imageData: &imageData, index: index, colors: (r, g, b))
-    
-    return overflow
 }
 
-
-
+func prepareQuantization(grayScaleImage cgImage: CGImage) throws -> (CGContext,UnsafeMutablePointer<UInt8>, Int) {
+    let width = cgImage.width
+    let height = cgImage.height
+    
+    let (imageContext, grayImageData, bytesPerPixel) = try createContextAndData(cgImage: cgImage, width: cgImage.width, height: cgImage.height)
+    
+    for y in 0..<height{
+        for x in 0..<width{
+            let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
+            
+            let newColor = quantitizeGrayScale(pixelColor: grayImageData[index])
+            
+            grayImageData[index] = newColor
+            
+        }
+    }
+    
+    return (imageContext,grayImageData, bytesPerPixel)
+}
