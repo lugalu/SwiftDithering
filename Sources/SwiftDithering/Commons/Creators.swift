@@ -16,7 +16,6 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
     let bytesPerPixel = bytesPerPixel ?? bytesPerRow / width
     let bitsPerComponent = cgImage.bitsPerComponent
     
-    
     let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height * bytesPerPixel)
     
     guard let imageContext = CGContext(data: imageData,
@@ -35,40 +34,7 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
     return (imageContext, imageData, bytesPerPixel)
 }
 
-func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
-    guard
-        let sourceImageFormat = vImage_CGImageFormat(cgImage: cgImage),
-        let rgbDestinationImageFormat = vImage_CGImageFormat(
-            bitsPerComponent: 8,
-            bitsPerPixel: 8 * 4,
-            colorSpace: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)) else {
-        throw ImageErrors.failedToConvertimage(localizedDescription: "Unable to initialize")
-    }
-   
-    let result = try createCGImage(source: sourceImageFormat, destination: rgbDestinationImageFormat, image: cgImage)
-    
-    return result
-
-}
-
-func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
-    guard
-        let sourceImageFormat = vImage_CGImageFormat(cgImage: cgImage),
-        let grayDestinationBuffer = vImage_CGImageFormat(
-            bitsPerComponent: 8,
-            bitsPerPixel: 8 * 2,
-            colorSpace: CGColorSpaceCreateDeviceGray(),
-            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)) else {
-        throw ImageErrors.failedToConvertimage(localizedDescription: "Unable to initialize")
-    }
-
-    let result = try createCGImage(source: sourceImageFormat, destination: grayDestinationBuffer, image: cgImage)
-    
-    return result
-}
-
-private func createCGImage(source: vImage_CGImageFormat, destination: vImage_CGImageFormat, image: CGImage) throws -> CGImage {
+internal func createCGImage(source: vImage_CGImageFormat, destination: vImage_CGImageFormat, image: CGImage) throws -> CGImage {
     
     let converter = try vImageConverter.make(sourceFormat: source, destinationFormat: destination)
     
@@ -87,3 +53,7 @@ private func createCGImage(source: vImage_CGImageFormat, destination: vImage_CGI
     
     return result
 }
+
+
+
+
