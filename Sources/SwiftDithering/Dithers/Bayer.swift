@@ -47,6 +47,13 @@ public enum BayerSizes: Int{
 
 /**
     Loops through all the pixels on screen then calculate and applies the color, all is done via the pointer so no need for returns all parameters are carried over from [apply ordered dither](x-source-tag://applyOrderedDither)
+    - Parameters:
+     - imageData: the buffer to be modified **must** be in RGB format
+     - bayerSize: Matrix size to be applied to the image
+     - width: Image width
+     - heigt: Image height
+     - spread: how far the distorted pixel can be from the original color
+     - bytesPerPixel: total of bytes for the index offset
  */
 internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, width: Int, height: Int, spread: Double, bytesPerPixel: Int){
     for y in 0..<height{

@@ -8,10 +8,18 @@
 import UIKit
 
 /**
-    Loops through all the pixels on screen then calculate and applies the color for multiple pixels, all is done via the pointer so no need for returns all parameters are carried over from [apply Error dither](x-source-tag://applyErrorDifusion) when the type is set to Floyd-Steinberg.
+    Loops through all the pixels on screen then calculate and applies the color for multiple pixels, all is done directly to the image Buffer and all parameters are carried over from [apply Error dither](x-source-tag://applyErrorDifusion) when the type is set to Floyd-Steinberg.
+    - Parameters:
+      - finalImageData: the data from the Buffer that will be rendered
+      - quantitizedImageData: the buffer that was made into gray Scale but **must** retain the RGB format
+      - width: the image Width used to get pixels in X axis (Columns)
+      - height: The image height used to get pixels in Y Axis (Rows)
+      - finalImageBytesPerPixel: Bytes per pixel from finalImageData
+      - quantitizedBytesPerPixel: Bytes per pixel from quantitizedImageData
+      - nearestFactor: Factor for color reduction means the number of allowed bits.
  */
 internal func floydDither(finalImageData: inout UnsafeMutablePointer<UInt8>, quantitizedImageData: UnsafeMutablePointer<UInt8>, width: Int, height: Int, finalImageBytesPerPixel finalBytesPerPixel: Int, quantitizedBytesPerPixel: Int, nearestFactor: Int) {
-    
+    let floydDivider = 16.0
     for y in 0..<height {
         for x in 0..<width {
             let finalImageIndex = indexCalculator(x: x, y: y, width: width, bytesPerPixel: finalBytesPerPixel)
@@ -34,12 +42,12 @@ internal func floydDither(finalImageData: inout UnsafeMutablePointer<UInt8>, qua
             }
             if y + 1 < height {
                 if x - 1 >= 0 {
-                    applyQuantization(&finalImageData, error, x: x - 1, y: y + 1, width: width, bytesPerPixel: finalBytesPerPixel, multiplier: 3)
+                    applyQuantization(&finalImageData, error, x: x - 1, y: y + 1, width: width, bytesPerPixel: finalBytesPerPixel, errorBias: 3 / floydDivider)
                 }
-                applyQuantization(&finalImageData, error, x: x, y: y + 1, width: width, bytesPerPixel: finalBytesPerPixel, multiplier: 5)
+                applyQuantization(&finalImageData, error, x: x, y: y + 1, width: width, bytesPerPixel: finalBytesPerPixel, errorBias: 5 / floydDivider)
                 
                 if x + 1 < width {
-                    applyQuantization(&finalImageData, error, x: x + 1, y: y + 1, width: width, bytesPerPixel: finalBytesPerPixel, multiplier: 1)
+                    applyQuantization(&finalImageData, error, x: x + 1, y: y + 1, width: width, bytesPerPixel: finalBytesPerPixel, errorBias: 1 / floydDivider)
                 }
             }
             
