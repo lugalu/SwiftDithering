@@ -9,9 +9,9 @@ Since is my first time doing something like this a lot of the code is prone to c
 Currently Features:
  - Bayer matrix;
  - Floyd Steinberg Error Diffusion;
+ - Stucky Error Difusion.
  
 Planned Dithers:
- - Stucky Error Difusion
  - Fixed Threshold
  - Random Threshold 
  - Clustered Dots
@@ -33,4 +33,4 @@ Planned Dithers:
  ## Considerations
 * Since all runs on the CPU they are calculated as sequential and are expensive so tasks and loadings are needed for the user UI.
 * Feel free to suggest performance improvements and report any bug that you may find while using this lib
-* These dithers are based on the [matlab article stored in the archive.today](https://archive.ph/71e9G) 
+* These dithers are based on the [matlab article stored in the archive.today](https://archive.ph/71e9G)

@@ -50,9 +50,13 @@ public extension UIImage{
                         nearestFactor: nearestFactor)
             
         case .stucki:
-            //TODO: Implement Stucki type.
-            return UIImage(systemName: "pencil")!
-
+            stucki(finalImageData: &imageData,
+                   quantitizedImageData: quantitizedImageData,
+                   width: width,
+                   height: height,
+                   finalImageBytesPerPixel: bytesPerPixel,
+                   quantitizedBytesPerPixel: quantitizedBytesPerPixel,
+                   nearestFactor: nearestFactor)
         }
         
         guard let outputCGImage = imageContext.makeImage()  else {
