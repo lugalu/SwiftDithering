@@ -1,9 +1,4 @@
-//
-//  File.swift
-//  
-//
 //  Created by Lugalu on 18/07/23.
-//
 
 import Foundation
 

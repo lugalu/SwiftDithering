@@ -1,9 +1,4 @@
-//
-//  File.swift
-//  
-//
 //  Created by Lugalu on 30/07/23.
-//
 
 import Foundation
 import Accelerate
