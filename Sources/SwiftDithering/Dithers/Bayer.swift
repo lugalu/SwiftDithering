@@ -50,22 +50,26 @@ public enum BayerSizes: Int{
      - spread: how far the distorted pixel can be from the original color
      - bytesPerPixel: total of bytes for the index offset
  */
-internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, width: Int, height: Int, spread: Double, bytesPerPixel: Int){
+internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, width: Int, height: Int, bytesPerPixel: Int, isBayerInverted: Bool){
     for y in 0..<height{
         for x in 0..<width{
             let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
             
             let bayerFactor = bayerSize.rawValue
             let bayerMatrixResult = bayerSize.getBayerMatrix()[y % bayerFactor][x % bayerFactor]
-            let bayerValue = Double(bayerMatrixResult) - 0.5
+            let bayerValue = Int(round(Double(bayerMatrixResult) - 0.5))
             
-            let (oldR, oldG, oldB) = getRgbFor(index: index, inData: imageData)
+            let quantitizedValue = Int(quantitizeGrayScale(pixelColor: imageData[index]))
             
-            let newR = Int(Double(oldR) + spread * bayerValue)
-            let newG = Int(Double(oldG) + spread * bayerValue)
-            let newB = Int(Double(oldB) + spread * bayerValue)
+            var color = 0
             
-            assignNewColorsTo(imageData: &imageData, index: index, colors: (newR, newG, newB))
+            if isBayerInverted && quantitizedValue > 1 - bayerValue {
+                color = 255
+            }else if quantitizedValue > bayerValue{
+                color = 255
+            }
+            
+           assignNewColorTo(imageData: &imageData, index: index, colors: color)
             
         }
     }

@@ -66,6 +66,10 @@ internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, in
     imageData[index + 2] = UInt8(clamping: colors.b)
 }
 
+internal func assignNewColorTo(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, colors: Int) {
+    imageData[index] = UInt8(clamping: colors)
+}
+
 /**
  Calculates the nearest reduced color pallete based on the factor
  - Parameters:

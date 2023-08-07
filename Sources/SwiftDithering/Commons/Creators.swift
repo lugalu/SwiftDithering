@@ -48,7 +48,7 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
  */
 internal func createCGImage(source: vImage_CGImageFormat, destination: vImage_CGImageFormat, image: CGImage) throws -> CGImage {
     
-    let converter = try vImageConverter.make(sourceFormat: source, destinationFormat: destination)
+    let converter = try vImageConverter.make(sourceFormat: source, destinationFormat: destination, flags: .printDiagnosticsToConsole)
     
     let sourceBuffer = try vImage_Buffer(cgImage: image)
     defer {
