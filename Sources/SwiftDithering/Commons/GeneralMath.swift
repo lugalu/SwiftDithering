@@ -83,4 +83,16 @@ internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) 
     return (r,g,b)
 }
 
+/**
+    Simple conversion from UInt8 tuple to Int Tuple
+ */
+internal func convertOriginalColor(_ color: originalColor) -> colorTuple{
+    let color = (
+        Int(color.r),
+        Int(color.g),
+        Int(color.b)
+    )
+    
+    return color
+}
 
