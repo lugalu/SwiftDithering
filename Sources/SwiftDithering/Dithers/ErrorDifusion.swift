@@ -5,6 +5,8 @@ import UIKit
 public enum ErrorDifusionTypes{
     case floydSteinberg
     case stucki
+    case fastFloydSteinberg
+    case fastStucki
 }
 
 public extension UIImage{
@@ -51,6 +53,26 @@ public extension UIImage{
                    nearestFactor: nearestFactor,
                    numberOfBits: numberOfBits
             )
+            
+        case .fastFloydSteinberg:
+            fastFloydDither(imageData: &imageData,
+                            width: width,
+                            height: height,
+                            bytesPerPixel: bytesPerPixel,
+                            nearestFactor: nearestFactor,
+                            numberOfBits: numberOfBits,
+                            isQuantizationInverted: isQuantizationInverted
+            )
+            
+        case .fastStucki:
+            fastStucki(imageData: &imageData,
+                   width: width,
+                   height: height,
+                   bytesPerPixel: bytesPerPixel,
+                   nearestFactor: nearestFactor,
+                   numberOfBits: numberOfBits
+            )
+            
         }
         
         guard let outputCGImage = imageContext.makeImage()  else {
@@ -59,7 +81,7 @@ public extension UIImage{
 
         }
         
-        return UIImage(cgImage: outputCGImage)
+        return UIImage(cgImage: outputCGImage, scale: self.scale, orientation: self.imageOrientation)
     }
     
  

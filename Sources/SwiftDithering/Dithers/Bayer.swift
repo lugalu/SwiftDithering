@@ -1,7 +1,7 @@
 //  Created by Lugalu on 30/07/23.
 
 import Foundation
-import Dispatch
+
 /**
  This enum contains all the information regarding Bayer matrices from size to matrix values.
  */
@@ -77,7 +77,7 @@ internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerS
         }
     }
     
-#if DEBUG
-    print("Finished totalTime: \(CFAbsoluteTimeGetCurrent() - start)")
-#endif
+    #if DEBUG
+        print("Finished bayer dithering totalTime: \(CFAbsoluteTimeGetCurrent() - start)")
+    #endif
 }
