@@ -66,6 +66,10 @@ internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, in
     imageData[index + 2] = UInt8(clamping: colors.b)
 }
 
+internal func assignNewColorTo(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, colors: Int) {
+    imageData[index] = UInt8(clamping: colors)
+}
+
 /**
  Calculates the nearest reduced color pallete based on the factor
  - Parameters:
@@ -83,4 +87,16 @@ internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) 
     return (r,g,b)
 }
 
+/**
+    Simple conversion from UInt8 tuple to Int Tuple
+ */
+internal func convertOriginalColor(_ color: originalColor) -> colorTuple{
+    let color = (
+        Int(color.r),
+        Int(color.g),
+        Int(color.b)
+    )
+    
+    return color
+}
 

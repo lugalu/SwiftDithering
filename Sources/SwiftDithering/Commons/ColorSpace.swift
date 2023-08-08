@@ -10,6 +10,9 @@ import UIKit
     - Returns: the converted image
  */
 func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
+    #if DEBUG
+        let start = CFAbsoluteTimeGetCurrent()
+    #endif
     guard
         let sourceImageFormat = vImage_CGImageFormat(cgImage: cgImage),
         let grayDestinationBuffer = vImage_CGImageFormat(
@@ -21,7 +24,9 @@ func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
     }
 
     let result = try createCGImage(source: sourceImageFormat, destination: grayDestinationBuffer, image: cgImage)
-    
+    #if DEBUG
+        print("Convert Color Space to Gray total time: \(CFAbsoluteTimeGetCurrent() - start)")
+    #endif
     return result
 }
 
@@ -32,6 +37,9 @@ func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
     - Returns: the converted image
  */
 func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
+    #if DEBUG
+        let start = CFAbsoluteTimeGetCurrent()
+    #endif
     guard
         let sourceImageFormat = vImage_CGImageFormat(cgImage: cgImage),
         let rgbDestinationImageFormat = vImage_CGImageFormat(
@@ -43,6 +51,10 @@ func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
     }
    
     let result = try createCGImage(source: sourceImageFormat, destination: rgbDestinationImageFormat, image: cgImage)
+    
+    #if DEBUG
+        print("Convert Color Space to RGB total time: \(CFAbsoluteTimeGetCurrent() - start)")
+    #endif
     
     return result
 

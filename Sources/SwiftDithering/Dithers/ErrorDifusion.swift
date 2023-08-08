@@ -5,6 +5,8 @@ import UIKit
 public enum ErrorDifusionTypes{
     case floydSteinberg
     case stucki
+    case fastFloydSteinberg
+    case fastStucki
 }
 
 public extension UIImage{
@@ -18,20 +20,13 @@ public extension UIImage{
         - Returns: UIImage with the dithering applied
      */
     /// - Tag: applyErrorDifusion
-    func applyErrorDifusion(withType diffusionType: ErrorDifusionTypes, nearestFactor: Int = 2) throws -> UIImage {
+    func applyErrorDifusion(withType diffusionType: ErrorDifusionTypes, nearestFactor: Int = 2, numberOfBits: Int = 1, isQuantizationInverted: Bool = false) throws -> UIImage {
         guard let cgImageTemp = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
         let cgImage = try convertColorSpaceToRGB(cgImageTemp)
     
         let width = cgImage.width
         let height = cgImage.height
-        
-        let quantizatorImage = try convertColorSpaceToGrayScale(cgImage)
-        let (_,quantitizedImageData, quantitizedBytesPerPixel) = try prepareQuantization(grayScaleImage: quantizatorImage)
-        
-        defer{
-            quantitizedImageData.deallocate()
-        }
         
         var (imageContext, imageData, bytesPerPixel) = try createContextAndData(cgImage: cgImage, width: width, height: height)
         
@@ -41,22 +36,43 @@ public extension UIImage{
 
         switch diffusionType {
         case .floydSteinberg:
-            floydDither(finalImageData: &imageData,
-                        quantitizedImageData: quantitizedImageData,
+            floydDither(imageData: &imageData,
                         width: width,
                         height: height,
-                        finalImageBytesPerPixel: bytesPerPixel,
-                        quantitizedBytesPerPixel: quantitizedBytesPerPixel,
-                        nearestFactor: nearestFactor)
+                        bytesPerPixel: bytesPerPixel,
+                        nearestFactor: nearestFactor,
+                        numberOfBits: numberOfBits,
+                        isQuantizationInverted: isQuantizationInverted
+            )
             
         case .stucki:
-            stucki(finalImageData: &imageData,
-                   quantitizedImageData: quantitizedImageData,
+            stucki(imageData: &imageData,
                    width: width,
                    height: height,
-                   finalImageBytesPerPixel: bytesPerPixel,
-                   quantitizedBytesPerPixel: quantitizedBytesPerPixel,
-                   nearestFactor: nearestFactor)
+                   bytesPerPixel: bytesPerPixel,
+                   nearestFactor: nearestFactor,
+                   numberOfBits: numberOfBits
+            )
+            
+        case .fastFloydSteinberg:
+            fastFloydDither(imageData: &imageData,
+                            width: width,
+                            height: height,
+                            bytesPerPixel: bytesPerPixel,
+                            nearestFactor: nearestFactor,
+                            numberOfBits: numberOfBits,
+                            isQuantizationInverted: isQuantizationInverted
+            )
+            
+        case .fastStucki:
+            fastStucki(imageData: &imageData,
+                   width: width,
+                   height: height,
+                   bytesPerPixel: bytesPerPixel,
+                   nearestFactor: nearestFactor,
+                   numberOfBits: numberOfBits
+            )
+            
         }
         
         guard let outputCGImage = imageContext.makeImage()  else {
@@ -65,7 +81,7 @@ public extension UIImage{
 
         }
         
-        return UIImage(cgImage: outputCGImage)
+        return UIImage(cgImage: outputCGImage, scale: self.scale, orientation: self.imageOrientation)
     }
     
  

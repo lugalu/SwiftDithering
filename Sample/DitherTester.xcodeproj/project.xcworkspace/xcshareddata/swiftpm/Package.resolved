@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swiftdithering",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lugalu/SwiftDithering",
+      "state" : {
+        "revision" : "73c47e624f94500fa99ccb7f4e4bc0c14e2158b1",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 2
+}
