@@ -5,7 +5,6 @@ import SwiftDithering
 
 class OrderedDitherViewController: UIViewController, DitherControlProtocol {
     let matrixSelector: CustomMenuComponent = CustomMenuComponent()
-    let spreadSelector: CustomSliderComponent = CustomSliderComponent()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,7 +15,6 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
         super.viewWillAppear(animated)
         setupUI()
         matrixSelector.configure(withTitle: "Bayer Matrix Size", pickerOwner: self)
-        spreadSelector.configure(withTitle: "Spread", minValue: 0.0, maxValue: 1.0)
     }
     
     func retrivedDitheredImage(for image: UIImage?) throws -> UIImage? {
@@ -33,7 +31,7 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
             return nil
         }
         
-        return try image?.applyOrderedDither(withSize: bayer, spread: Double(spreadSelector.retrieveValue()))
+        return try image?.applyOrderedDither(withSize: bayer)
     }
 }
 
@@ -42,12 +40,10 @@ extension OrderedDitherViewController{
     func setupUI(){
         addSubviews()
         addPickerConstraints()
-        addSliderConstraint()
     }
     
     func addSubviews(){
         view.addSubview(matrixSelector)
-        view.addSubview(spreadSelector)
     }
     
     func addPickerConstraints(){
@@ -60,18 +56,6 @@ extension OrderedDitherViewController{
         
         NSLayoutConstraint.activate(constraints)
     }
-    
-    func addSliderConstraint(){
-        let constraints = [
-            spreadSelector.topAnchor.constraint(equalTo: matrixSelector.bottomAnchor, constant: 8),
-            spreadSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            spreadSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            spreadSelector.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ]
-        
-        NSLayoutConstraint.activate(constraints)
-    }
-    
 }
 
 extension OrderedDitherViewController: UIPickerViewDelegate, UIPickerViewDataSource{

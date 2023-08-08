@@ -40,6 +40,6 @@ extension ViewController{
         
         let direction: UIPageViewController.NavigationDirection = ditherSelector.selectedSegmentIndex > ditherOptions.lastSelectedIndex ? .forward : .reverse
         ditherOptions.lastSelectedIndex = ditherSelector.selectedSegmentIndex
-        ditherOptions.setViewControllers([vc], direction: direction, animated: true)
+        ditherOptions.setViewControllers([vc], direction: direction, animated: false)
     }
 }

@@ -7,6 +7,8 @@ class ErrorDifusionViewController: UIViewController, DitherControlProtocol {
     
     let difusionSelector: CustomMenuComponent = CustomMenuComponent()
     let factorSelector: CustomSliderComponent = CustomSliderComponent()
+    let fastSelector: CustomToggleComponent = CustomToggleComponent()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -14,7 +16,17 @@ class ErrorDifusionViewController: UIViewController, DitherControlProtocol {
     }
     
     func retrivedDitheredImage(for image: UIImage?) throws -> UIImage? {
-        let difusionType: ErrorDifusionTypes = difusionSelector.retrieveValue() == 0 ? .floydSteinberg : .stucki
+        var difusionType: ErrorDifusionTypes
+        switch difusionSelector.retrieveValue(){
+        case 0:
+            difusionType = fastSelector.retrieveValue() ? .fastFloydSteinberg : .floydSteinberg
+        case 1:
+            difusionType = fastSelector.retrieveValue() ? .fastStucki : .stucki
+        default:
+            difusionType = .floydSteinberg
+            
+        }
+        
         let factor = Int(round(factorSelector.retrieveValue()))
 
         return try image?.applyErrorDifusion(withType: difusionType, nearestFactor: factor)
@@ -24,7 +36,8 @@ class ErrorDifusionViewController: UIViewController, DitherControlProtocol {
         super.viewWillAppear(animated)
         setupUI()
         difusionSelector.configure(withTitle: "Difusion Type", pickerOwner: self)
-        factorSelector.configure(withTitle: "Nearest Factor", minValue: 0.5, maxValue: 16.0)
+        factorSelector.configure(withTitle: "Nearest Factor", minValue: 2.0, maxValue: 16.0)
+        fastSelector.configure(withTitle: "Should Multithread")
     }
 
 }
@@ -35,11 +48,13 @@ extension ErrorDifusionViewController{
         addSubviews()
         addPickerConstraints()
         addSliderConstraint()
+        addToggleConstraints()
     }
     
     func addSubviews(){
         view.addSubview(difusionSelector)
         view.addSubview(factorSelector)
+        view.addSubview(fastSelector)
     }
     
     func addPickerConstraints(){
@@ -47,7 +62,7 @@ extension ErrorDifusionViewController{
             difusionSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             difusionSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -8),
             difusionSelector.topAnchor.constraint(equalTo: view.topAnchor,constant: 8),
-            difusionSelector.bottomAnchor.constraint(equalTo: view.centerYAnchor)
+            difusionSelector.bottomAnchor.constraint(equalTo: view.centerYAnchor, constant: -15)
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -58,7 +73,17 @@ extension ErrorDifusionViewController{
             factorSelector.topAnchor.constraint(equalTo: difusionSelector.bottomAnchor, constant: 8),
             factorSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             factorSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            factorSelector.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    func addToggleConstraints(){
+        let constraints = [
+            fastSelector.topAnchor.constraint(equalTo: factorSelector.bottomAnchor, constant: 8),
+            fastSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            fastSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            fastSelector.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ]
         
         NSLayoutConstraint.activate(constraints)

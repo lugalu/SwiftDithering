@@ -22,6 +22,7 @@ class CustomSliderComponent: UIView {
         defaultText = title
         slider.maximumValue = maxValue
         slider.minimumValue = minValue
+        slider.value = minValue
         label.text = title + " \(retrieveRoundedValue(slider.value))"
         
         slider.addTarget(self, action: #selector(onSlideChange(_:)), for: .valueChanged)
