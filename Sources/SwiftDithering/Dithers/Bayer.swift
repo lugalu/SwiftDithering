@@ -1,7 +1,7 @@
 //  Created by Lugalu on 30/07/23.
 
 import Foundation
-
+import Dispatch
 /**
  This enum contains all the information regarding Bayer matrices from size to matrix values.
  */
@@ -51,7 +51,11 @@ public enum BayerSizes: Int{
      - bytesPerPixel: total of bytes for the index offset
  */
 internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, width: Int, height: Int, bytesPerPixel: Int, isBayerInverted: Bool){
-    for y in 0..<height{
+    #if DEBUG
+        let start = CFAbsoluteTimeGetCurrent()
+    #endif
+   
+    DispatchQueue.concurrentPerform(iterations: height){ y in
         for x in 0..<width{
             let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
             
@@ -70,7 +74,10 @@ internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerS
             }
             
            assignNewColorTo(imageData: &imageData, index: index, colors: color)
-            
         }
     }
+    
+#if DEBUG
+    print("Finished totalTime: \(CFAbsoluteTimeGetCurrent() - start)")
+#endif
 }

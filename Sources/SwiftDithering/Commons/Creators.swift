@@ -14,7 +14,9 @@ import Accelerate
     - Returns: A tuple containg the context, image buffer and bytes per pixel, remember to deallocate the image buffer once it's not needed
  */
 func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: Int, height: Int) throws -> (imageContext: CGContext, imageData: UnsafeMutablePointer<UInt8>, bytesPerPixel: Int){
-  
+    #if DEBUG
+        let start = CFAbsoluteTimeGetCurrent()
+    #endif
     let colorSpace = cgImage.colorSpace!
     let bytesPerRow = cgImage.bytesPerRow
     let bytesPerPixel = bytesPerPixel ?? bytesPerRow / width
@@ -34,6 +36,10 @@ func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: In
         throw ImageErrors.failedToCreateContext(localizedDescription: "Context Creation failed! Please generate an issue in the github repository with the image.")
     }
     imageContext.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+    
+    #if DEBUG
+        print("Create Context and Data total time: \(CFAbsoluteTimeGetCurrent() - start)")
+    #endif
     
     return (imageContext, imageData, bytesPerPixel)
 }
