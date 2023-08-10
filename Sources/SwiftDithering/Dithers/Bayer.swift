@@ -55,26 +55,24 @@ internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerS
         let start = CFAbsoluteTimeGetCurrent()
     #endif
    
-    DispatchQueue.concurrentPerform(iterations: height){ y in
-        for x in 0..<width{
-            let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-            
-            let bayerFactor = bayerSize.rawValue
-            let bayerMatrixResult = bayerSize.getBayerMatrix()[y % bayerFactor][x % bayerFactor]
-            let bayerValue = Int(round(Double(bayerMatrixResult) - 0.5))
-            
-            let quantitizedValue = Int(quantitizeGrayScale(pixelColor: imageData[index]))
-            
-            var color = 0
-            
-            if isBayerInverted && quantitizedValue > 1 - bayerValue {
-                color = 255
-            }else if quantitizedValue > bayerValue{
-                color = 255
-            }
-            
-           assignNewColorTo(imageData: &imageData, index: index, colors: color)
+    genericFastImageLooper(imageData: &imageData, width: width, height: height){ imageData, x, y in
+        let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
+        
+        let bayerFactor = bayerSize.rawValue
+        let bayerMatrixResult = bayerSize.getBayerMatrix()[y % bayerFactor][x % bayerFactor]
+        let bayerValue = Int(round(Double(bayerMatrixResult) - 0.5))
+        
+        let quantitizedValue = Int(quantitizeGrayScale(pixelColor: imageData[index]))
+        
+        var color = 0
+        
+        if isBayerInverted && quantitizedValue > 1 - bayerValue {
+            color = 255
+        }else if quantitizedValue > bayerValue{
+            color = 255
         }
+        
+       assignNewColorTo(imageData: &imageData, index: index, colors: color)
     }
     
     #if DEBUG

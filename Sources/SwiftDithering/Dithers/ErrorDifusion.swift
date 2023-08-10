@@ -3,9 +3,23 @@
 import UIKit
 
 public enum ErrorDifusionTypes{
+    /**
+        Standart Floyd-Steinberg dither algorithm runs on only one thread as originally intended produces the most accurate version, but can be very slow
+     */
     case floydSteinberg
+    /**
+        Standart Stucki dither algorithm runs on only one thread as originally intended produces the most accurate version, but can be very slow
+     */
     case stucki
+    /**
+        Floyd-Steinberg dither algorithm runs on multiple Threads fast but not accurate in certain scenarios
+        - Warning: Some images Get really distorted with this option enabled, only worth for big images.
+     */
     case fastFloydSteinberg
+    /**
+        Stucki dither algorithm runs on multiple Threads fast but not accurate in certain scenarios
+        - Warning: Some images Get really distorted with this option enabled, only worth for big images.
+     */
     case fastStucki
 }
 
@@ -35,48 +49,29 @@ public extension UIImage{
             imageData.deallocate()
         }
 
+        var assigner: (inout UnsafeMutablePointer<UInt8>, (Int,Int), (Int,Int), colorTuple, colorTuple, Int) -> Void
+        var looper: (inout UnsafeMutablePointer<UInt8>, Int, Int, @escaping (_ imageData: inout UnsafeMutablePointer<UInt8>, _ x: Int, _ y: Int) -> Void) -> Void
+        
         switch diffusionType {
         case .floydSteinberg:
-            floydDither(imageData: &imageData,
-                        width: width,
-                        height: height,
-                        bytesPerPixel: bytesPerPixel,
-                        nearestFactor: nearestFactor,
-                        numberOfBits: numberOfBits,
-                        isQuantizationInverted: isQuantizationInverted
-            )
+            assigner = assignFloydResults
+            looper = genericImageLooper
             
         case .stucki:
-            stucki(imageData: &imageData,
-                   width: width,
-                   height: height,
-                   bytesPerPixel: bytesPerPixel,
-                   nearestFactor: nearestFactor,
-                   numberOfBits: numberOfBits,
-                   isQuantizationInverted: isQuantizationInverted
-            )
+            assigner = stuckiLogic
+            looper = genericImageLooper
             
         case .fastFloydSteinberg:
-            fastFloydDither(imageData: &imageData,
-                            width: width,
-                            height: height,
-                            bytesPerPixel: bytesPerPixel,
-                            nearestFactor: nearestFactor,
-                            numberOfBits: numberOfBits,
-                            isQuantizationInverted: isQuantizationInverted
-            )
+            assigner = assignFloydResults
+            looper = genericFastImageLooper
             
         case .fastStucki:
-            fastStucki(imageData: &imageData,
-                   width: width,
-                   height: height,
-                   bytesPerPixel: bytesPerPixel,
-                   nearestFactor: nearestFactor,
-                   numberOfBits: numberOfBits,
-                  isQuantizationInverted:  isQuantizationInverted
-            )
+            assigner = stuckiLogic
+            looper = genericFastImageLooper
             
         }
+        
+        genericErrorDifusion(imageData: &imageData, width: width, height: height, bytesPerPixel: bytesPerPixel, numberOfBits: numberOfBits, isQuantizationInverted: isQuantizationInverted, assigner: assigner, looper: looper)
         
         guard let outputCGImage = imageContext.makeImage()  else {
             throw ImageErrors
