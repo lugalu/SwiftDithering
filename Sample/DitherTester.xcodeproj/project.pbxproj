@@ -19,9 +19,9 @@
 		09204A892A6DE1BA002E8D10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09204A882A6DE1BA002E8D10 /* Assets.xcassets */; };
 		09204A8C2A6DE1BA002E8D10 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09204A8A2A6DE1BA002E8D10 /* LaunchScreen.storyboard */; };
 		096747622A82FC300005F844 /* CustomToggleComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096747612A82FC300005F844 /* CustomToggleComponent.swift */; };
-		096747652A8301C10005F844 /* SwiftDithering in Frameworks */ = {isa = PBXBuildFile; productRef = 096747642A8301C10005F844 /* SwiftDithering */; };
 		09A44CA52A7DC13600615C77 /* CustomMenuComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A44CA42A7DC13600615C77 /* CustomMenuComponent.swift */; };
 		09A44CA72A7DC8B200615C77 /* CustomSliderComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A44CA62A7DC8B200615C77 /* CustomSliderComponent.swift */; };
+		09B3B4B32A8532CE00877538 /* SwiftDithering in Frameworks */ = {isa = PBXBuildFile; productRef = 09B3B4B22A8532CE00877538 /* SwiftDithering */; };
 		09C0478F2A79CCDC004FA2F0 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C0478E2A79CCDC004FA2F0 /* CustomButton.swift */; };
 		09C047922A79D791004FA2F0 /* ViewController + Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C047912A79D791004FA2F0 /* ViewController + Constraints.swift */; };
 		09D6F7302A813AF5009E0100 /* DitherPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6F72F2A813AF5009E0100 /* DitherPageController.swift */; };
@@ -54,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				096747652A8301C10005F844 /* SwiftDithering in Frameworks */,
+				09B3B4B32A8532CE00877538 /* SwiftDithering in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,7 +159,7 @@
 			);
 			name = DitherTester;
 			packageProductDependencies = (
-				096747642A8301C10005F844 /* SwiftDithering */,
+				09B3B4B22A8532CE00877538 /* SwiftDithering */,
 			);
 			productName = DitherTester;
 			productReference = 09204A7C2A6DE1B8002E8D10 /* DitherTester.app */;
@@ -190,7 +190,7 @@
 			);
 			mainGroup = 09204A732A6DE1B8002E8D10;
 			packageReferences = (
-				096747632A8301C10005F844 /* XCRemoteSwiftPackageReference "SwiftDithering" */,
+				09B3B4B12A8532CE00877538 /* XCRemoteSwiftPackageReference "SwiftDithering" */,
 			);
 			productRefGroup = 09204A7D2A6DE1B8002E8D10 /* Products */;
 			projectDirPath = "";
@@ -385,6 +385,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lugalu.DitherTester;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -414,6 +415,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lugalu.DitherTester;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -446,20 +448,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		096747632A8301C10005F844 /* XCRemoteSwiftPackageReference "SwiftDithering" */ = {
+		09B3B4B12A8532CE00877538 /* XCRemoteSwiftPackageReference "SwiftDithering" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lugalu/SwiftDithering";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		096747642A8301C10005F844 /* SwiftDithering */ = {
+		09B3B4B22A8532CE00877538 /* SwiftDithering */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 096747632A8301C10005F844 /* XCRemoteSwiftPackageReference "SwiftDithering" */;
+			package = 09B3B4B12A8532CE00877538 /* XCRemoteSwiftPackageReference "SwiftDithering" */;
 			productName = SwiftDithering;
 		};
 /* End XCSwiftPackageProductDependency section */

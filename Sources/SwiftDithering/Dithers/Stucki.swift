@@ -77,22 +77,22 @@ internal func fastStucki(imageData: inout UnsafeMutablePointer<UInt8>, width: In
             let oldColor = getRgbFor(index: index, inData: imageData)
             let newColor = findClosestPallete(oldColor, nearestFactor: nearestFactor)
             
-            let error = makeQuantizationError(originalColor: newColor, quantitizedColor: quantitizedValue)
+            let error = makeQuantizationError(originalColor: newColor, quantitizedColor: quantitizedValue, isInverted: isQuantizationInverted)
             
             assignNewColorsTo(imageData: &imageData, index: index, colors: newColor)
             
             if x + 1 < width{
-                applyQuantization(&imageData, error, x: x + 1, y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: 8/42)
+                applyQuantization(&imageData, error, x: x + 1, y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: 8/stuckiDivider)
             }
             
             if x + 2 < width{
-                applyQuantization(&imageData, error, x: x + 2, y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: 4/42)
+                applyQuantization(&imageData, error, x: x + 2, y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: 4/stuckiDivider)
             }
             
             if y + 1 < height{
                 let rowValues: [Double] = [2.0, 4, 8, 4, 2].map{ $0 / stuckiDivider }
                 
-                applyStuckiToRow(&imageData, error: error, baseX: x, row: y+1, width: width, bytesPerPixel: bytesPerPixel, biasOrder: rowValues)
+                applyStuckiToRow(&imageData, error: error, baseX: x, row: y + 1, width: width, bytesPerPixel: bytesPerPixel, biasOrder: rowValues)
             }
             
             if y + 2 < height{
@@ -108,11 +108,11 @@ internal func fastStucki(imageData: inout UnsafeMutablePointer<UInt8>, width: In
 
 private func applyStuckiToRow(_ imageData: inout UnsafeMutablePointer<UInt8>, error: (r: Int, g: Int, b: Int), baseX x: Int, row y: Int, width: Int, bytesPerPixel: Int, biasOrder: [Double]){
         
-        if x - 2 >= width {
+        if x - 2 >= 0 {
             applyQuantization(&imageData, error, x: x - 2, y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[0])
         }
         
-        if x - 1 >= width {
+        if x - 1 >= 0 {
             applyQuantization(&imageData, error, x: x - 1 , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[1])
         }
         

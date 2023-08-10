@@ -6,7 +6,7 @@ import SwiftDithering
 class ErrorDifusionViewController: UIViewController, DitherControlProtocol {
     
     let difusionSelector: CustomMenuComponent = CustomMenuComponent()
-    let factorSelector: CustomSliderComponent = CustomSliderComponent()
+    let bitSelector: CustomSliderComponent = CustomSliderComponent()
     let fastSelector: CustomToggleComponent = CustomToggleComponent()
     
     
@@ -15,7 +15,7 @@ class ErrorDifusionViewController: UIViewController, DitherControlProtocol {
 
     }
     
-    func retrivedDitheredImage(for image: UIImage?) throws -> UIImage? {
+    func retrivedDitheredImage(for image: UIImage?) async throws -> UIImage? {
         var difusionType: ErrorDifusionTypes
         switch difusionSelector.retrieveValue(){
         case 0:
@@ -27,16 +27,16 @@ class ErrorDifusionViewController: UIViewController, DitherControlProtocol {
             
         }
         
-        let factor = Int(round(factorSelector.retrieveValue()))
+        let bit = Int(floor(bitSelector.retrieveValue()))
 
-        return try image?.applyErrorDifusion(withType: difusionType, nearestFactor: factor)
+        return try image?.applyErrorDifusion(withType: difusionType, numberOfBits: bit)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupUI()
         difusionSelector.configure(withTitle: "Difusion Type", pickerOwner: self)
-        factorSelector.configure(withTitle: "Nearest Factor", minValue: 2.0, maxValue: 16.0)
+        bitSelector.configure(withTitle: "Number of bits", minValue: 1.0, maxValue: 16.0)
         fastSelector.configure(withTitle: "Should Multithread")
     }
 
@@ -47,13 +47,13 @@ extension ErrorDifusionViewController{
     func setupUI(){
         addSubviews()
         addPickerConstraints()
-        addSliderConstraint()
+        addBitConstraints()
         addToggleConstraints()
     }
     
     func addSubviews(){
         view.addSubview(difusionSelector)
-        view.addSubview(factorSelector)
+        view.addSubview(bitSelector)
         view.addSubview(fastSelector)
     }
     
@@ -68,11 +68,12 @@ extension ErrorDifusionViewController{
         NSLayoutConstraint.activate(constraints)
     }
     
-    func addSliderConstraint(){
+    
+    func addBitConstraints(){
         let constraints = [
-            factorSelector.topAnchor.constraint(equalTo: difusionSelector.bottomAnchor, constant: 8),
-            factorSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            factorSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            bitSelector.topAnchor.constraint(equalTo: difusionSelector.bottomAnchor, constant: 8),
+            bitSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            bitSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -80,10 +81,9 @@ extension ErrorDifusionViewController{
     
     func addToggleConstraints(){
         let constraints = [
-            fastSelector.topAnchor.constraint(equalTo: factorSelector.bottomAnchor, constant: 8),
+            fastSelector.topAnchor.constraint(equalTo: bitSelector.bottomAnchor, constant: 8),
             fastSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            fastSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            fastSelector.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            fastSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8)
         ]
         
         NSLayoutConstraint.activate(constraints)

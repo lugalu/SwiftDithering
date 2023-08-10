@@ -23,14 +23,11 @@ internal func floydDither(imageData: inout UnsafeMutablePointer<UInt8>, width: I
             for x in 0..<width {
     
                 let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-                let quantitizedValue = quantitizeRGB(imageData: imageData, index: index, numberOfBits: 2)
                 let oldColor = getRgbFor(index: index, inData: imageData)
-                let newColor = findClosestPallete(oldColor, nearestFactor: nearestFactor)
-                
-                let error = makeQuantizationError(originalColor: newColor, quantitizedColor: quantitizedValue, isInverted: isQuantizationInverted)
-                
-                
-                assignNewColorsTo(imageData: &imageData, index: index, colors: newColor)
+                let quantitizedValue = quantitizeRGB(imageData: imageData, index: index, numberOfBits: numberOfBits)
+                let error = makeQuantizationError(originalColor: oldColor, quantitizedColor: quantitizedValue, isInverted: isQuantizationInverted)
+               
+                assignNewColorsTo(imageData: &imageData, index: index, colors: convertOriginalColor(quantitizedValue))
                 
                 if x + 1 < width {
                     applyQuantization(&imageData, error, x: x + 1, y: y, width: width, bytesPerPixel: bytesPerPixel)
@@ -77,14 +74,11 @@ internal func floydDither(imageData: inout UnsafeMutablePointer<UInt8>, width: I
             DispatchQueue.concurrentPerform(iterations: width) { x in
                 
                 let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-                let quantitizedValue = quantitizeRGB(imageData: imageData, index: index, numberOfBits: 2)
                 let oldColor = getRgbFor(index: index, inData: imageData)
-                let newColor = findClosestPallete(oldColor, nearestFactor: nearestFactor)
+                let quantitizedValue = quantitizeRGB(imageData: imageData, index: index, numberOfBits: numberOfBits)
+                let error = makeQuantizationError(originalColor: oldColor, quantitizedColor: quantitizedValue, isInverted: isQuantizationInverted)
                 
-                let error = makeQuantizationError(originalColor: newColor, quantitizedColor: quantitizedValue, isInverted: isQuantizationInverted)
-                
-
-                assignNewColorsTo(imageData: &imageData, index: index, colors: newColor)
+                assignNewColorsTo(imageData: &imageData, index: index, colors: convertOriginalColor(quantitizedValue))
                 
                 if x + 1 < width {
                     applyQuantization(&imageData, error, x: x + 1, y: y, width: width, bytesPerPixel: bytesPerPixel)

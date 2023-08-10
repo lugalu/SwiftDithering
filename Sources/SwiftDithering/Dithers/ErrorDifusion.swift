@@ -20,11 +20,12 @@ public extension UIImage{
         - Returns: UIImage with the dithering applied
      */
     /// - Tag: applyErrorDifusion
-    func applyErrorDifusion(withType diffusionType: ErrorDifusionTypes, nearestFactor: Int = 2, numberOfBits: Int = 1, isQuantizationInverted: Bool = false) throws -> UIImage {
-        guard let cgImageTemp = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
+    func applyErrorDifusion(withType diffusionType: ErrorDifusionTypes, nearestFactor: Int = 2, numberOfBits: Int = 2, isQuantizationInverted: Bool = false) throws -> UIImage {
+        guard var cgImage = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
-        let cgImage = try convertColorSpaceToRGB(cgImageTemp)
-    
+        cgImage = try convertColorSpaceToRGB(cgImage)
+        
+        
         let width = cgImage.width
         let height = cgImage.height
         
@@ -51,7 +52,8 @@ public extension UIImage{
                    height: height,
                    bytesPerPixel: bytesPerPixel,
                    nearestFactor: nearestFactor,
-                   numberOfBits: numberOfBits
+                   numberOfBits: numberOfBits,
+                   isQuantizationInverted: isQuantizationInverted
             )
             
         case .fastFloydSteinberg:
@@ -70,7 +72,8 @@ public extension UIImage{
                    height: height,
                    bytesPerPixel: bytesPerPixel,
                    nearestFactor: nearestFactor,
-                   numberOfBits: numberOfBits
+                   numberOfBits: numberOfBits,
+                  isQuantizationInverted:  isQuantizationInverted
             )
             
         }
