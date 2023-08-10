@@ -17,13 +17,16 @@ class CustomSliderComponent: UIView {
         return slider
     }()
     
+    var roundValue = 1.0
     
-    func configure(withTitle title: String, minValue: Float, maxValue: Float){
+    
+    func configure(withTitle title: String, minValue: Float, maxValue: Float, roundValue: Double = 1){
         defaultText = title
         slider.maximumValue = maxValue
         slider.minimumValue = minValue
         slider.value = minValue
         label.text = title + " \(retrieveRoundedValue(slider.value))"
+        self.roundValue = roundValue
         
         slider.addTarget(self, action: #selector(onSlideChange(_:)), for: .valueChanged)
         self.addSubview(label)
@@ -51,11 +54,11 @@ class CustomSliderComponent: UIView {
         label.text = defaultText + " \(retrieveRoundedValue(sender.value))"
     }
     
-    func retrieveValue() -> Float{
+    func retrieveValue() -> Double{
         return retrieveRoundedValue(slider.value)
     }
     
-    private func retrieveRoundedValue(_ value: Float) -> Float{
-        return ceil(value * 4) / 4
+    private func retrieveRoundedValue(_ value: Float) -> Double{
+        return ceil(Double(value) * roundValue) / roundValue
     }
 }

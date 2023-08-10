@@ -26,7 +26,11 @@ extension ViewController{
     private func configureNavBar(){
         self.navigationItem.largeTitleDisplayMode = .never
         self.navigationItem.title = "Dither Example"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openGallery))
+        
+        let saveImageButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveImageToGallery))
+        let addImageButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openGallery))
+        
+        self.navigationItem.rightBarButtonItems = [addImageButton, saveImageButton]
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Default", style: .done, target: self, action: #selector(restoreDefaultImage))
     }
     

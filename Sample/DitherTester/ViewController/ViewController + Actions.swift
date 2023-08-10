@@ -10,6 +10,11 @@ extension ViewController{
         }
     }
     
+    @objc func saveImageToGallery(){
+        guard let image = imageView.image else { return }
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+    }
+    
     @objc func applyDither(){
         Task{
             do{
