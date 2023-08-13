@@ -9,7 +9,11 @@ import Accelerate
       - pixelColor: single channel of the pixel to be quantitized
      - Returns: The Thresholded color
  */
-internal func quantitizeGrayScale(pixelColor: UInt8) -> UInt8{
+internal func quantitizeGrayScale(pixelColor: UInt8, isInverted: Bool = false) -> UInt8{
+    if isInverted{
+        return 255 - Int(pixelColor) < 128 ? 0 : 255
+    }
+    
     return pixelColor < 128 ? 0 : 255
 }
 

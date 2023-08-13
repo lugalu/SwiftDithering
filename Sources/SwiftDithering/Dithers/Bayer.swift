@@ -60,19 +60,11 @@ internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerS
         
         let bayerFactor = bayerSize.rawValue
         let bayerMatrixResult = bayerSize.getBayerMatrix()[y % bayerFactor][x % bayerFactor]
-        let bayerValue = Int(round(Double(bayerMatrixResult) - 0.5))
+        let bayerValue = imageData[index].addingReportingOverflow(bayerMatrixResult).partialValue
         
-        let quantitizedValue = Int(quantitizeGrayScale(pixelColor: imageData[index]))
+        let quantitizedValue = Int(quantitizeGrayScale(pixelColor: bayerValue, isInverted: isBayerInverted))
         
-        var color = 0
-        
-        if isBayerInverted && quantitizedValue > 1 - bayerValue {
-            color = 255
-        }else if quantitizedValue > bayerValue{
-            color = 255
-        }
-        
-       assignNewColorTo(imageData: &imageData, index: index, colors: color)
+       assignNewColorTo(imageData: &imageData, index: index, colors: quantitizedValue)
     }
     
     #if DEBUG
