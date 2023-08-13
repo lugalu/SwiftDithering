@@ -80,8 +80,8 @@ internal func assignNewColorTo(imageData: inout UnsafeMutablePointer<UInt8>, ind
 internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) -> colorTuple{
     let nearestFactor = UInt8(clamping: nearestFactor - 1)
     
-    let r =  Int(round(Double(oldColor.r) * Double(nearestFactor))) / Int(nearestFactor)
-    let g =  Int(round(Double(oldColor.g) * Double(nearestFactor))) / Int(nearestFactor)
+    let r =  Int(round(Double(oldColor.r) * Double(nearestFactor)) / Double(nearestFactor))
+    let g =  Int(round(Double(oldColor.g) * Double(nearestFactor)) / Double(nearestFactor))
     let b =  Int(round(Double(oldColor.b) * Double(nearestFactor)) / Double(nearestFactor))
     
     return (r,g,b)

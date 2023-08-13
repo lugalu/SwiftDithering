@@ -3,5 +3,5 @@
 import UIKit
 
 protocol DitherControlProtocol: UIViewController{
-    func retrivedDitheredImage(for: UIImage?) throws -> UIImage?
+    func retrivedDitheredImage(for: UIImage?) async throws -> UIImage?
 }

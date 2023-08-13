@@ -10,13 +10,18 @@ extension ViewController{
         }
     }
     
+    @objc func saveImageToGallery(){
+        guard let image = imageView.image else { return }
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+    }
+    
     @objc func applyDither(){
         Task{
             do{
                 let index = self.ditherSelector.selectedSegmentIndex
                 let ditherer = ditherOptions.ditherControllers[index]
                 
-                let newImage = try ditherer.retrivedDitheredImage(for: self.imageView.image)
+                let newImage = try await ditherer.retrivedDitheredImage(for: self.imageView.image)
                 DispatchQueue.main.async {
                     self.imageView.image = newImage
                 }

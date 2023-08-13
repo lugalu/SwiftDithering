@@ -8,9 +8,10 @@ extension ViewController{
         configureNavBar()
         addImageViewConstraints()
         addDitherSelectorConstraints()
-        addDitherOptionsContraints()
-        addRevertConstraints()
         addApplyConstraints()
+        addRevertConstraints()
+        addDitherOptionsContraints()
+
     }
     
     private func addSubViews(){
@@ -25,7 +26,11 @@ extension ViewController{
     private func configureNavBar(){
         self.navigationItem.largeTitleDisplayMode = .never
         self.navigationItem.title = "Dither Example"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openGallery))
+        
+        let saveImageButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveImageToGallery))
+        let addImageButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openGallery))
+        
+        self.navigationItem.rightBarButtonItems = [addImageButton, saveImageButton]
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Default", style: .done, target: self, action: #selector(restoreDefaultImage))
     }
     
@@ -59,7 +64,7 @@ extension ViewController{
             ditherOptions.view.topAnchor.constraint(equalTo: ditherSelector.bottomAnchor, constant: 8),
             ditherOptions.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             ditherOptions.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            ditherOptions.view.heightAnchor.constraint(equalToConstant: 200)
+            ditherOptions.view.bottomAnchor.constraint(equalTo: revertButton.topAnchor, constant: -8)
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -67,7 +72,7 @@ extension ViewController{
     
     private func addRevertConstraints(){
         let constraints = [
-            revertButton.topAnchor.constraint(equalTo: ditherOptions.view.bottomAnchor, constant: 8),
+            revertButton.bottomAnchor.constraint(equalTo: applyButton.topAnchor, constant: -8),
             revertButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             revertButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
             revertButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)
@@ -77,7 +82,7 @@ extension ViewController{
     
     private func addApplyConstraints(){
         let constraints = [
-            applyButton.topAnchor.constraint(equalTo: revertButton.bottomAnchor, constant: 8),
+            applyButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
             applyButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             applyButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
             applyButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)
