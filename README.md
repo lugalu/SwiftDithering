@@ -7,7 +7,7 @@ The implementation is done via the Accelerate framework.
 - Bayer 8x8:
     ![European city by Andre Lazic](./Sample/SampleImages/CityComparison.png)
     - Photo by <a href="https://unsplash.com/@andrazlazic?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Andraz Lazic</a> on <a href="https://unsplash.com/photos/5suzgCS6mIc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-    - warning the dither may not appear due to the saving process with UIImageWriteToSavedPhotosAlbum, I plan to fix this later in the Sample App
+    - warning the dither may not appear due to the filter applied during the saving process with UIImageWriteToSavedPhotosAlbum, I recommend giving a try in the sample app for more fidelity.
 <br>
 - Floyd-Steinberg:
     - 1-bit:
