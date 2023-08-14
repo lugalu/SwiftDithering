@@ -12,8 +12,13 @@ The implementation is done via the Accelerate framework.
     - 1-bit:
     <img src="https://i.imgur.com/tyzuqXu.png"/>
     
+    
+    
     - 2-bits:
     <img src="https://i.imgur.com/UOo2bbZ.png"/>
+
+
+
 
 ## Plans And Features
 Since is my first time doing something like this a lot of the code is prone to change, I will try to do it in the most non-disruptive way but I cannot guarantee it will work in every single version.
