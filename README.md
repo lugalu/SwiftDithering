@@ -12,9 +12,7 @@ The implementation is done via the Accelerate framework.
 - Floyd-Steinberg:
     - 1-bit:
     <img src="https://i.imgur.com/tyzuqXu.png"/>
-
- <br>
-
+<br>
     - 2-bits:
     <img src="https://i.imgur.com/UOo2bbZ.png"/>
 
