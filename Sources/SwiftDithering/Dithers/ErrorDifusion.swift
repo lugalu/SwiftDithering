@@ -58,7 +58,7 @@ public extension UIImage{
             looper = genericImageLooper
             
         case .stucki:
-            assigner = stuckiLogic
+            assigner = assignStuckiResults
             looper = genericImageLooper
             
         case .fastFloydSteinberg:
@@ -66,7 +66,7 @@ public extension UIImage{
             looper = genericFastImageLooper
             
         case .fastStucki:
-            assigner = stuckiLogic
+            assigner = assignStuckiResults
             looper = genericFastImageLooper
             
         }
@@ -85,4 +85,56 @@ public extension UIImage{
  
     
     
+}
+
+/**
+ A generic application of Error difusion it just calculates the basic values that are equal to all styles
+ - Parameters:
+    - imageData: Image buffer to be modified
+    - width: total width of the image
+    - height: total height of the image
+    - bytesPerPixel: number of bytes of each pixel on screen is multiplied with the rest of the index as an offset
+    - numberOfBits: number of desired bits to reduce the color pallete
+    - isQuantizationInverted: inverts the order of quantization producing interesting results
+    - assigner: the brain of the error difusion this determines how is assigned and spread
+    - looper: the type of looper used to access each pixel.
+ */
+internal func genericErrorDifusion(imageData: inout UnsafeMutablePointer<UInt8>,
+                                                width: Int,
+                                                height: Int,
+                                                bytesPerPixel: Int,
+                                                numberOfBits: Int,
+                                                isQuantizationInverted: Bool,
+                                                assigner:  @escaping (inout UnsafeMutablePointer<UInt8>,
+                                                                      (Int,Int),
+                                                                      (Int,Int),
+                                                                      colorTuple,
+                                                                      colorTuple,
+                                                                      Int) -> Void,
+                                            looper: (inout UnsafeMutablePointer<UInt8>,
+                                                     Int, Int,
+                                                     @escaping (_ imageData: inout UnsafeMutablePointer<UInt8>,
+                                                                _ x: Int,
+                                                                _ y: Int) -> Void) -> Void) {
+         #if DEBUG
+             let start = CFAbsoluteTimeGetCurrent()
+         #endif
+    
+    looper(&imageData, width, height){ (imageData,x, y) in
+
+        let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
+        let oldColor = getRgbFor(index: index, inData: imageData)
+        let quantitizedValue = quantitizeRGB(imageData: imageData, index: index, numberOfBits: numberOfBits)
+        let error = makeQuantizationError(originalColor: oldColor, quantitizedColor: quantitizedValue, isInverted: isQuantizationInverted)
+
+        let pos = (x, y)
+        let size = (width, height)
+
+        assigner(&imageData, pos, size, convertOriginalColor(quantitizedValue), error, bytesPerPixel)
+    }
+    
+         #if DEBUG
+             print("Finished floy dithering totalTime: \(CFAbsoluteTimeGetCurrent() - start)")
+         #endif
+
 }

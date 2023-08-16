@@ -41,33 +41,87 @@ public enum BayerSizes: Int{
 }
 
 /**
-    Loops through all the pixels on screen then calculate and applies the color, all is done via the pointer so no need for returns all parameters are carried over from [apply ordered dither](x-source-tag://applyOrderedDither)
+   Generic Implementation of Bayer dithering, the base implementation is always the same just the assigner implementation  that determine the final result
     - Parameters:
-     - imageData: the buffer to be modified **must** be in RGB format
-     - bayerSize: Matrix size to be applied to the image
-     - width: Image width
-     - heigt: Image height
-     - spread: how far the distorted pixel can be from the original color
-     - bytesPerPixel: total of bytes for the index offset
+      - imageData: the buffer to be modified
+      - bayerSize: Matrix size and factor to be applied to the image
+      - size: Image width and height respectively
+      - spread: Amount to deviate from the threshold
+      - numberOfBits: if the image is Colored how many colors are allowed
+      - bytesPerPixel: total of bytes for the index offset
+      - isBayerInverted: if color is gray Scale this inverts the operation making the image darker than normal
+      - assigner: executes the pixel modification based on parameters defined in [apply ordered dither](x-source-tag://applyOrderedDither)
  */
-internal func bayerDither(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, width: Int, height: Int, bytesPerPixel: Int, isBayerInverted: Bool){
-    #if DEBUG
-        let start = CFAbsoluteTimeGetCurrent()
-    #endif
-   
-    genericFastImageLooper(imageData: &imageData, width: width, height: height){ imageData, x, y in
-        let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
+internal func genericBayer(_ imageData: inout UnsafeMutablePointer<UInt8>, bayerSize: BayerSizes, size: (width: Int, height: Int), spread: Double = 0.5, numberOfBits:Int, bytesPerPixel: Int, isBayerInverted:Bool, assigner: @escaping (inout UnsafeMutablePointer<UInt8>, Int, UInt8, Bool, Int) -> Void) {
+    
+#if DEBUG
+    let start = CFAbsoluteTimeGetCurrent()
+#endif
+
+    
+    genericFastImageLooper(imageData: &imageData, width: size.width, height: size.height){ imageData, x, y in
+        let index = indexCalculator(x: x, y: y, width: size.width, bytesPerPixel: bytesPerPixel)
         
         let bayerFactor = bayerSize.rawValue
         let bayerMatrixResult = bayerSize.getBayerMatrix()[y % bayerFactor][x % bayerFactor]
-        let bayerValue = imageData[index].addingReportingOverflow(bayerMatrixResult).partialValue
         
-        let quantitizedValue = Int(quantitizeGrayScale(pixelColor: bayerValue, isInverted: isBayerInverted))
+        // the threshold is multiplied to 1/nˆ2 where n is one of the matrix sizes this together with the subtraction of 1/2 normalizes the value
+        // then multiply by 255 to go back to 0-255 range
         
-       assignNewColorTo(imageData: &imageData, index: index, colors: quantitizedValue)
+        var bayerValue = Double(bayerMatrixResult)
+        bayerValue *= (1 / pow(Double(bayerFactor), 2))
+        bayerValue -= 0.5
+        bayerValue *= 255
+        
+        //The deviation of color basic color banding
+        let calculatedDeviation = UInt8(clamping: Int(spread * bayerValue))
+        
+        assigner(&imageData, index, calculatedDeviation, isBayerInverted, numberOfBits)
     }
     
-    #if DEBUG
-        print("Finished bayer dithering totalTime: \(CFAbsoluteTimeGetCurrent() - start)")
-    #endif
+#if DEBUG
+    print("Finished bayer dithering totalTime: \(CFAbsoluteTimeGetCurrent() - start)")
+#endif
+    
+}
+
+/**
+    Assigns the pixel color when the image is set to grayScale simplest iteration of bayer
+    - Parameters:
+      - imageData: buffer to be modified
+      - index: the pixel to be modified
+      - deviation: pre-calculated deviation to be added to the pixel
+      - isInverted: if set to On it inverts the average color of the image making it darker if it was white and vice versa
+      - numberOfBits: in this assigner it's ignored
+ */
+internal func assignGrayScaleBayer(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, deviation: UInt8, isInverted: Bool, numberOfBits: Int = 0) {
+    let pixelColor = imageData[index].addingReportingOverflow(deviation).partialValue
+    let quantitizedValue = Int(quantitizeGrayScale(pixelColor: pixelColor, isInverted: isInverted))
+   assignNewColorTo(imageData: &imageData, index: index, colors: quantitizedValue)
+}
+
+/**
+    Assigns the pixel color when the image is set to RGB
+    - Parameters:
+      - imageData: buffer to be modified
+      - index: the pixel to be modified
+      - deviation: pre-calculated deviation to be added to the pixel
+      - isInverted: in this assigner it's ignored
+      - numberOfBits: the number of colors allowed when calculated we remove -1
+ */
+internal func assignColoredBayer(imageData: inout UnsafeMutablePointer<UInt8>,
+                               index: Int,
+                               deviation: UInt8,
+                               isInverted: Bool,
+                               numberOfBits: Int
+) {
+    let originalPixel = getRgbFor(index: index, inData: imageData)
+    
+    let r = originalPixel.r.addingReportingOverflow(deviation).partialValue
+    let g = originalPixel.g.addingReportingOverflow(deviation).partialValue
+    let b = originalPixel.b.addingReportingOverflow(deviation).partialValue
+    
+    let quantitizedValue = quantitizeRGB(color: (r,g,b),numberOfBits: numberOfBits)
+    
+   assignNewColorsTo(imageData: &imageData, index: index, colors: convertOriginalColor(quantitizedValue))
 }
