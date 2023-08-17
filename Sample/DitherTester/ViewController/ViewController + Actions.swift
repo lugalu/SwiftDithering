@@ -47,4 +47,11 @@ extension ViewController{
         ditherOptions.lastSelectedIndex = ditherSelector.selectedSegmentIndex
         ditherOptions.setViewControllers([vc], direction: direction, animated: false)
     }
+    
+    @objc func onImageViewTapped(){
+        let vc = ImageZoomViewController()
+        vc.configure(image: imageView.image)
+        vc.modalPresentationStyle = .automatic
+        self.present(vc, animated: true)
+    }
 }

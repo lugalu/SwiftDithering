@@ -14,23 +14,22 @@ public extension UIImage {
        - isGrayScale: if the image should be converted to grayScale only
        - spread: how much deviation should exist when adding the threshold to each pixel recommended to be within 0-1
        - numberOfBits: if the image is colored how much colors you allow
+       - downsampleFactor
      - Returns: UIImage with the dithering applied
      - Tag: applyOrderedDither
      */
-    func applyOrderedDither(withSize bayerSize: BayerSizes, isBayerInverted: Bool = false, isGrayScale: Bool = false, spread: Double = 1.0, numberOfBits:Int = 2) throws -> UIImage {
-        guard let cgImageBase = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
+    func applyOrderedDither(withSize bayerSize: BayerSizes, isBayerInverted: Bool = false, isGrayScale: Bool = false, spread: Double = 1.0, numberOfBits:Int = 2, downSampleFactor: Int = 1) throws -> UIImage {
+        guard var cgImageBase = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
-        var assigner: (inout UnsafeMutablePointer<UInt8>, Int, UInt8, Bool, Int) -> Void
-        var cgImage: CGImage
+        cgImageBase = try convertColorSpaceToRGB(cgImageBase)
+        cgImageBase = try downSample(image: cgImageBase, factor: downSampleFactor)
+        
+        var assigner = assignColoredBayer
+        var cgImage: CGImage = cgImageBase
         
         if isGrayScale {
             assigner = assignGrayScaleBayer
             cgImage = try convertColorSpaceToGrayScale(cgImageBase)
-            
-        }else {
-            assigner = assignColoredBayer
-            cgImage = try convertColorSpaceToRGB(cgImageBase)
-            
         }
         
         let width = cgImage.width

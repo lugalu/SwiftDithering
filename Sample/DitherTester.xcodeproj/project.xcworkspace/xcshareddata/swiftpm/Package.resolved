@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/lugalu/SwiftDithering",
       "state" : {
-        "revision" : "4e4ac690b9f9c0a75fa72437db108375863f7473",
-        "version" : "1.1.0"
+        "branch" : "developer",
+        "revision" : "5d8b6f1c91705ffd8e25e3b7cac6af6ccf4d085d"
       }
     }
   ],
