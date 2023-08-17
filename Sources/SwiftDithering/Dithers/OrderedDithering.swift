@@ -14,7 +14,7 @@ public extension UIImage {
        - isGrayScale: if the image should be converted to grayScale only
        - spread: how much deviation should exist when adding the threshold to each pixel recommended to be within 0-1
        - numberOfBits: if the image is colored how much colors you allow
-       - downsampleFactor
+       - downSampleFactor: factor(2ˆn) to down sample the image by default is set to 1(halves the image) to not downsample make this 0.
      - Returns: UIImage with the dithering applied
      - Tag: applyOrderedDither
      */
@@ -22,7 +22,10 @@ public extension UIImage {
         guard var cgImageBase = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
         cgImageBase = try convertColorSpaceToRGB(cgImageBase)
-        cgImageBase = try downSample(image: cgImageBase, factor: downSampleFactor)
+        
+        if downSampleFactor > 0{
+            cgImageBase = try downSample(image: cgImageBase, factor: downSampleFactor)
+        }
         
         var assigner = assignColoredBayer
         var cgImage: CGImage = cgImageBase
