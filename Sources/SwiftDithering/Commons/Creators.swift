@@ -13,7 +13,7 @@ import Accelerate
       - height: the height of the image
     - Returns: A tuple containg the context, image buffer and bytes per pixel, remember to deallocate the image buffer once it's not needed
  */
-func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: Int, height: Int) throws -> (imageContext: CGContext, imageData: UnsafeMutablePointer<UInt8>, bytesPerPixel: Int){
+internal func createContextAndData(cgImage: CGImage, bytesPerPixel: Int? = nil, width: Int, height: Int) throws -> (imageContext: CGContext, imageData: UnsafeMutablePointer<UInt8>, bytesPerPixel: Int){
     #if DEBUG
         let start = CFAbsoluteTimeGetCurrent()
     #endif

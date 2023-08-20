@@ -22,10 +22,7 @@ public extension UIImage {
         guard var cgImageBase = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
         cgImageBase = try convertColorSpaceToRGB(cgImageBase)
-        
-        if downSampleFactor > 0{
-            cgImageBase = try downSample(image: cgImageBase, factor: downSampleFactor)
-        }
+        cgImageBase = try downSample(image: cgImageBase, factor: downSampleFactor)
         
         var assigner = assignColoredBayer
         var cgImage: CGImage = cgImageBase

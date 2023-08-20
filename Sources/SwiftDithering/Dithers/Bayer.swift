@@ -97,7 +97,7 @@ internal func genericBayer(_ imageData: inout UnsafeMutablePointer<UInt8>, bayer
 internal func assignGrayScaleBayer(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, deviation: UInt8, isInverted: Bool, numberOfBits: Int = 0) {
     let pixelColor = imageData[index].addingReportingOverflow(deviation).partialValue
     let quantitizedValue = Int(quantitizeGrayScale(pixelColor: pixelColor, isInverted: isInverted))
-   assignNewColorTo(imageData: &imageData, index: index, colors: quantitizedValue)
+   assignNewColorsTo(imageData: &imageData, index: index, colors: quantitizedValue)
 }
 
 /**

@@ -8,8 +8,9 @@ import UIKit
     - Parameters:
       - cgImage: the image to be converted and re-rendered
     - Returns: the converted image
+ - Tag: convertColorSpaceToGrayScale
  */
-func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
+public func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
     #if DEBUG
         let start = CFAbsoluteTimeGetCurrent()
     #endif
@@ -35,8 +36,9 @@ func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
     - Parameters:
       - cgImage: the image to be converted and re-rendered
     - Returns: the converted image
+ - Tag: convertColorSpaceToRGB
  */
-func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
+public func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
     #if DEBUG
         let start = CFAbsoluteTimeGetCurrent()
     #endif

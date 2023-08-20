@@ -7,11 +7,15 @@ import Accelerate
  Generates a new downsampled Image based on the input can throw Image errors and vimage_Buffer errors
  - Parameters:
    - image: the image to be downsampled
-   - factor: the factor used to calculate the total downsample this is the equivalent to 2ˆn.
- - Warning: The provided Image MUST be in any of the RGB color Spaces for this to work without crashing the app, unfortunately there's no vImageScale that can throw when the source is different from the specified buffer .
+   - factor: the factor used to calculate the total downsample this is the equivalent to 2ˆn. if the supplied value is lesser or equal to 0 the  provided image is returned without modification.
+ - Warning: The provided Image **MUST** be in any of the RGB color Spaces. Check [convert Color Space to RGB](x-source-tag://convertColorSpaceToRGB) for a built-in solution
  - Returns: The downsampled image with the RGB ColorSpace
  */
 public func downSample(image: CGImage, factor: Int = 1) throws -> CGImage{
+    guard factor > 0, let space = image.colorSpace?.name, space == CGColorSpace.sRGB else {
+        return image
+    }
+    
     let factor = (1 << factor)
     
     let newWidth = image.width / factor
