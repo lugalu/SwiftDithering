@@ -5,7 +5,7 @@ import UIKit
 extension ViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     func setupSegmentedControl(){
-        let titles = ["Ordered", "Error Difusion"]
+        let titles = ["Ordered", "Error Difusion", "threshold"]
         
         for i in 0..<titles.count {
             let action = UIAction(title: titles[i]){ (action) in

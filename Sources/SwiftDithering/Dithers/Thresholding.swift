@@ -35,7 +35,7 @@ public enum ThresholdTypes{
 }
 
 
-extension UIImage{
+public extension UIImage{
     
     func applyThreshold(withType type: ThresholdTypes, thresholdPoint: UInt8 = 128, isQuantizationInverted: Bool = false) throws -> UIImage?{
         guard var cgImage = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
@@ -125,3 +125,35 @@ func genericThresholding(_ imageData: inout UnsafeMutablePointer<UInt8>,
         assigner(&imageData, index, isQuantizationInverted, thresholdPoint)
     }
 }
+
+
+/*
+ func uniformQuantization(image: UIImage, numLevels: Int) -> UIImage? {
+     guard let inputCGImage = image.cgImage else {
+         return nil
+     }
+     
+     let buffer = UnsafeBufferPointer<UInt8>(start: quantizedData.assumingMemoryBound(to: UInt8.self), count: width * height)
+     
+     let minIntensity = buffer.min() ?? 0
+     let maxIntensity = buffer.max() ?? 255
+     let intensityRange = Double(maxIntensity - minIntensity)
+     let intervalSize = intensityRange / Double(numLevels)
+     
+     var quantizedImagePixels = [UInt8](repeating: 0, count: width * height)
+     
+     for i in 0..<buffer.count {
+         let originalIntensity = Double(buffer[i])
+         let quantizedIntensity = UInt8(round((originalIntensity - Double(minIntensity)) / intervalSize) * intervalSize + Double(minIntensity))
+         quantizedImagePixels[i] = quantizedIntensity
+     }
+     
+     let quantizedCGImage = quantizedImagePixels.withUnsafeBytes { ptr in
+         return CGDataProvider(data: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self))!
+     }
+     
+     return UIImage(cgImage: quantizedCGImage, scale: image.scale, orientation: image.imageOrientation)
+ }
+ 
+ 
+ */

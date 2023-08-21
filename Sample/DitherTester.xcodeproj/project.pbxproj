@@ -13,6 +13,8 @@
 		0905F2B02A7C782000F3AECE /* ErrorDifusionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0905F2AF2A7C782000F3AECE /* ErrorDifusionViewController.swift */; };
 		0905F2B22A7C7E1500F3AECE /* ViewController + PageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0905F2B12A7C7E1500F3AECE /* ViewController + PageController.swift */; };
 		0905F2B42A7C7F0F00F3AECE /* ViewController + Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0905F2B32A7C7F0F00F3AECE /* ViewController + Actions.swift */; };
+		091F28202A9407470085A1CA /* ThresholdingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091F281F2A9407470085A1CA /* ThresholdingViewController.swift */; };
+		091F28232A94103C0085A1CA /* SwiftDithering in Frameworks */ = {isa = PBXBuildFile; productRef = 091F28222A94103C0085A1CA /* SwiftDithering */; };
 		09204A802A6DE1B8002E8D10 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09204A7F2A6DE1B8002E8D10 /* AppDelegate.swift */; };
 		09204A822A6DE1B8002E8D10 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09204A812A6DE1B8002E8D10 /* SceneDelegate.swift */; };
 		09204A842A6DE1B8002E8D10 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09204A832A6DE1B8002E8D10 /* ViewController.swift */; };
@@ -20,7 +22,6 @@
 		09204A8C2A6DE1BA002E8D10 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09204A8A2A6DE1BA002E8D10 /* LaunchScreen.storyboard */; };
 		096747622A82FC300005F844 /* CustomToggleComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096747612A82FC300005F844 /* CustomToggleComponent.swift */; };
 		099CC8F42A8EE0D100441B77 /* ImageZoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099CC8F32A8EE0D100441B77 /* ImageZoomViewController.swift */; };
-		099CC8F72A8EE94B00441B77 /* SwiftDithering in Frameworks */ = {isa = PBXBuildFile; productRef = 099CC8F62A8EE94B00441B77 /* SwiftDithering */; };
 		09A44CA52A7DC13600615C77 /* CustomMenuComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A44CA42A7DC13600615C77 /* CustomMenuComponent.swift */; };
 		09A44CA72A7DC8B200615C77 /* CustomSliderComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A44CA62A7DC8B200615C77 /* CustomSliderComponent.swift */; };
 		09C0478F2A79CCDC004FA2F0 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C0478E2A79CCDC004FA2F0 /* CustomButton.swift */; };
@@ -35,6 +36,7 @@
 		0905F2AF2A7C782000F3AECE /* ErrorDifusionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDifusionViewController.swift; sourceTree = "<group>"; };
 		0905F2B12A7C7E1500F3AECE /* ViewController + PageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController + PageController.swift"; sourceTree = "<group>"; };
 		0905F2B32A7C7F0F00F3AECE /* ViewController + Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController + Actions.swift"; sourceTree = "<group>"; };
+		091F281F2A9407470085A1CA /* ThresholdingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThresholdingViewController.swift; sourceTree = "<group>"; };
 		09204A7C2A6DE1B8002E8D10 /* DitherTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DitherTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09204A7F2A6DE1B8002E8D10 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		09204A812A6DE1B8002E8D10 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -56,7 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				099CC8F72A8EE94B00441B77 /* SwiftDithering in Frameworks */,
+				091F28232A94103C0085A1CA /* SwiftDithering in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +71,7 @@
 				0905F2AB2A7C774500F3AECE /* DitherControlProtocol.swift */,
 				0905F2AD2A7C77BC00F3AECE /* OrderedDitherViewController.swift */,
 				0905F2AF2A7C782000F3AECE /* ErrorDifusionViewController.swift */,
+				091F281F2A9407470085A1CA /* ThresholdingViewController.swift */,
 			);
 			path = DitherControl;
 			sourceTree = "<group>";
@@ -170,7 +173,7 @@
 			);
 			name = DitherTester;
 			packageProductDependencies = (
-				099CC8F62A8EE94B00441B77 /* SwiftDithering */,
+				091F28222A94103C0085A1CA /* SwiftDithering */,
 			);
 			productName = DitherTester;
 			productReference = 09204A7C2A6DE1B8002E8D10 /* DitherTester.app */;
@@ -201,7 +204,7 @@
 			);
 			mainGroup = 09204A732A6DE1B8002E8D10;
 			packageReferences = (
-				099CC8F52A8EE94B00441B77 /* XCRemoteSwiftPackageReference "SwiftDithering" */,
+				091F28212A94103C0085A1CA /* XCRemoteSwiftPackageReference "SwiftDithering" */,
 			);
 			productRefGroup = 09204A7D2A6DE1B8002E8D10 /* Products */;
 			projectDirPath = "";
@@ -230,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				09C047922A79D791004FA2F0 /* ViewController + Constraints.swift in Sources */,
+				091F28202A9407470085A1CA /* ThresholdingViewController.swift in Sources */,
 				0905F2B42A7C7F0F00F3AECE /* ViewController + Actions.swift in Sources */,
 				09A44CA52A7DC13600615C77 /* CustomMenuComponent.swift in Sources */,
 				09C0478F2A79CCDC004FA2F0 /* CustomButton.swift in Sources */,
@@ -462,20 +466,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		099CC8F52A8EE94B00441B77 /* XCRemoteSwiftPackageReference "SwiftDithering" */ = {
+		091F28212A94103C0085A1CA /* XCRemoteSwiftPackageReference "SwiftDithering" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lugalu/SwiftDithering";
 			requirement = {
-				branch = developer;
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		099CC8F62A8EE94B00441B77 /* SwiftDithering */ = {
+		091F28222A94103C0085A1CA /* SwiftDithering */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 099CC8F52A8EE94B00441B77 /* XCRemoteSwiftPackageReference "SwiftDithering" */;
+			package = 091F28212A94103C0085A1CA /* XCRemoteSwiftPackageReference "SwiftDithering" */;
 			productName = SwiftDithering;
 		};
 /* End XCSwiftPackageProductDependency section */

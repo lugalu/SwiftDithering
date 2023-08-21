@@ -19,7 +19,7 @@ internal func quantitizeGrayScale(pixelColor: UInt8, isInverted: Bool = false, t
 
 internal func randomQuantization(pixelColor: UInt8, isInverted: Bool = false) -> UInt8{
     var pixelColor = pixelColor
-    let thresholdPoint = UInt8.random(in: 0...255)
+    let thresholdPoint = 255 - UInt8.random(in: 0...255)
     
     if isInverted{
         pixelColor = UInt8(clamping:  255 - Int(pixelColor))
