@@ -2,70 +2,16 @@
 
 import UIKit
 
-internal func genericImageLooper(imageData: inout UnsafeMutablePointer<UInt8>,
-                                 width: Int, height: Int,
-                                 content: @escaping (_ imgData: inout UnsafeMutablePointer<UInt8>,_ x:Int,_ y:Int) -> Void) {
-    for y in 0..<height{
-        for x in 0..<width{
-            content(&imageData, x, y)
-        }
-    }
-}
-
-internal func genericFastImageLooper(imageData: inout UnsafeMutablePointer<UInt8>,
-                                     width: Int, height: Int,
-                                     content: @escaping (_ imgData: inout UnsafeMutablePointer<UInt8>,_ x:Int,_ y:Int) -> Void) {
-    
-    DispatchQueue.concurrentPerform(iterations: height) { y in
-        DispatchQueue.concurrentPerform(iterations: width) { x in
-            content(&imageData, x, y)
-        }
-    }
-    
-    
-}
-
-internal func genericErrorDifusion(imageData: inout UnsafeMutablePointer<UInt8>,
-                                                width: Int,
-                                                height: Int,
-                                                bytesPerPixel: Int,
-                                                numberOfBits: Int,
-                                                isQuantizationInverted: Bool,
-                                                assigner:  @escaping (inout UnsafeMutablePointer<UInt8>,
-                                                                      (Int,Int),
-                                                                      (Int,Int),
-                                                                      colorTuple,
-                                                                      colorTuple,
-                                                                      Int) -> Void,
-                                            looper: (inout UnsafeMutablePointer<UInt8>,
-                                                     Int, Int,
-                                                     @escaping (_ imageData: inout UnsafeMutablePointer<UInt8>,
-                                                                _ x: Int,
-                                                                _ y: Int) -> Void) -> Void) {
-         #if DEBUG
-             let start = CFAbsoluteTimeGetCurrent()
-         #endif
-    
-    looper(&imageData, width, height){ (imageData,x, y) in
-
-        let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-        let oldColor = getRgbFor(index: index, inData: imageData)
-        let quantitizedValue = quantitizeRGB(imageData: imageData, index: index, numberOfBits: numberOfBits)
-        let error = makeQuantizationError(originalColor: oldColor, quantitizedColor: quantitizedValue, isInverted: isQuantizationInverted)
-
-        let pos = (x, y)
-        let size = (width, height)
-
-        assigner(&imageData, pos, size, convertOriginalColor(quantitizedValue), error, bytesPerPixel)
-    }
-    
-         #if DEBUG
-             print("Finished floy dithering totalTime: \(CFAbsoluteTimeGetCurrent() - start)")
-         #endif
-
-}
-
-
+/**
+ Assigner for Floyd-Steingber operations this rules all the Floyg specific math from assigning new colors to applying the specific matrix for this stype of error difusion
+ - Parameters:
+    - imageData: buffer to be modified
+    - pos: x and y current coordinates respectively
+    - size: image width and height respectively
+    - quantitizedValue: value to be assigned to current pixel
+    - quantizationError: error to be spread to neighboring pixels
+    - bytesPerPixel: used as the offset of the index, jumping the color channels.
+ */
 internal func assignFloydResults(imageData: inout UnsafeMutablePointer<UInt8>,
                         pos: (x: Int, y: Int),
                         size: (width: Int, height: Int),

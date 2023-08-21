@@ -9,7 +9,8 @@ class DitherPageController: UIPageViewController {
     func configure(owner: UIPageViewControllerDelegate & UIPageViewControllerDataSource,
                    ditherViewControllers: [UIViewController & DitherControlProtocol] = [
         OrderedDitherViewController(),
-        ErrorDifusionViewController()
+        ErrorDifusionViewController(),
+        ThresholdingViewController()
     ]){
         self.delegate = owner
         self.dataSource = owner

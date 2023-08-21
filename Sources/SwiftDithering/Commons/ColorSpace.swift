@@ -6,10 +6,11 @@ import UIKit
 /**
     Converts image to the GrayScale format accepted by Quartz2D containing 16 bits in total (color(0-255) and alpha (0-255))
     - Parameters:
-    - cgImage: the image to be converted and re-rendered
+      - cgImage: the image to be converted and re-rendered
     - Returns: the converted image
+ - Tag: convertColorSpaceToGrayScale
  */
-func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
+public func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
     #if DEBUG
         let start = CFAbsoluteTimeGetCurrent()
     #endif
@@ -33,10 +34,11 @@ func convertColorSpaceToGrayScale(_ cgImage: CGImage) throws -> CGImage{
 /**
     Converts image to the sRGB format accepted by Quartz2D containing 32 bits in total (RGB(0-255) and Alpha (0-255))
     - Parameters:
-    - cgImage: the image to be converted and re-rendered
+      - cgImage: the image to be converted and re-rendered
     - Returns: the converted image
+ - Tag: convertColorSpaceToRGB
  */
-func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
+public func convertColorSpaceToRGB(_ cgImage: CGImage) throws -> CGImage{
     #if DEBUG
         let start = CFAbsoluteTimeGetCurrent()
     #endif

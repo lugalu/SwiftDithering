@@ -11,9 +11,8 @@ import Foundation
       - quantitizedValue: value to be assigned to current index
       - quantizationError: error to be applied to neighbours pixels
       - bytesPerPixel: Bytes per pixel for the indexCalculation
-      -
  */
-internal func stuckiLogic(imageData: inout UnsafeMutablePointer<UInt8>,
+internal func assignStuckiResults(imageData: inout UnsafeMutablePointer<UInt8>,
                         pos: (x: Int, y: Int),
                         size: (width: Int, height: Int),
                         quantitizedValue: colorTuple,
@@ -49,26 +48,37 @@ internal func stuckiLogic(imageData: inout UnsafeMutablePointer<UInt8>,
     
 }
 
-
+/**
+ Applies the quantization to given row with the given error Bias( x / 42 ), only checks the X to see if is within bounds y must be calculated before calling it
+  - Parameters:
+     - imageData: buffer to be modified
+     - error: the colorTuple with the quantitized error value for each channel
+     - baseX: the midlle collumn of the row , this will be subtracted 2 and increased by 2.
+     - row: the Y value
+     - width: total width of each row to check if X + n is withing bounds
+     - bytesPerPixel: needed to calculate the index for each pixel
+     - biasOrder: order of values pre-calculated 0 is x-2 4 is x+2 so a minimum of 5 values are needed, if more are passed they don't do anything.
+ */
 internal func applyStuckiToRow(_ imageData: inout UnsafeMutablePointer<UInt8>, error: (r: Int, g: Int, b: Int), baseX x: Int, row y: Int, width: Int, bytesPerPixel: Int, biasOrder: [Double]){
+    guard biasOrder.count >= 5 else { return }
         
-        if x - 2 >= 0 {
-            applyQuantization(&imageData, error, x: x - 2, y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[0])
-        }
-        
-        if x - 1 >= 0 {
-            applyQuantization(&imageData, error, x: x - 1 , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[1])
-        }
-        
-        applyQuantization(&imageData, error, x: x , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[2])
-        
-        if x + 1 < width {
-            applyQuantization(&imageData, error, x: x + 1 , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[3])
-        }
-        
-        if x + 2 < width {
-            applyQuantization(&imageData, error, x: x + 2 , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[4])
-        }
+    if x - 2 >= 0 {
+        applyQuantization(&imageData, error, x: x - 2, y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[0])
+    }
+    
+    if x - 1 >= 0 {
+        applyQuantization(&imageData, error, x: x - 1 , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[1])
+    }
+    
+    applyQuantization(&imageData, error, x: x , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[2])
+    
+    if x + 1 < width {
+        applyQuantization(&imageData, error, x: x + 1 , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[3])
+    }
+    
+    if x + 2 < width {
+        applyQuantization(&imageData, error, x: x + 2 , y: y, width: width, bytesPerPixel: bytesPerPixel, errorBias: biasOrder[4])
+    }
     
 }
 

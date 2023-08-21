@@ -23,6 +23,7 @@ class ViewController: UIViewController {
         imgView.layer.masksToBounds = true
         imgView.layer.borderColor = UIColor.gray.cgColor
         imgView.layer.borderWidth = 1
+        imgView.isUserInteractionEnabled = true
         
         return imgView
     }()
@@ -60,8 +61,10 @@ class ViewController: UIViewController {
         applyButton.addTarget(self, action: #selector(applyDither), for: .touchUpInside)
         revertButton.addTarget(self, action: #selector(removeDither), for: .touchUpInside)
         
-    }
-    
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onImageViewTapped))
+        imageView.addGestureRecognizer(tapGesture)
+    }    
 }
 
 

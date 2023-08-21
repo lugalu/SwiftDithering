@@ -9,24 +9,33 @@ public extension UIImage {
      Applies Ordered Dithering, also known as Bayer dithering to the image,  this dither support colors on the RGB space.
      The image must contain an CGImage to be processed, and this method can cause crashes that Cannot be throw becasue of the draw function.
      - Parameters:
-     - bayerSize: The Matrix size used to calculate the color difference;
-     - spread: Max distance between the calculated value and the original value by default  equals to 1.0, Warning: the value isn't clamped so going above the threshold can cause artifacts;
-     - bytesPerPixel: The image bytes can be tweaked for different results, going too low or too high can cause crashes, the default value is calculated between the division of bytesPerRow/Width
+       - bayerSize: The Matrix size used to calculate the color difference;
+       - spread: Max distance between the calculated value and the original value by default  equals to 1.0, Warning: the value isn't clamped so going above the threshold can cause artifacts;
+       - isGrayScale: if the image should be converted to grayScale only
+       - spread: how much deviation should exist when adding the threshold to each pixel recommended to be within 0-1
+       - numberOfBits: if the image is colored how much colors you allow
+       - downSampleFactor: factor(2ˆn) to down sample the image by default is set to 1(halves the image) to not downsample make this 0.
      - Returns: UIImage with the dithering applied
      - Tag: applyOrderedDither
      */
-    func applyOrderedDither(withSize bayerSize: BayerSizes, bytesPerPixel: Int? = nil, isBayerInverted: Bool = false) throws -> UIImage {
-        guard let cgImageTemp = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
+    func applyOrderedDither(withSize bayerSize: BayerSizes, isBayerInverted: Bool = false, isGrayScale: Bool = false, spread: Double = 1.0, numberOfBits:Int = 2, downSampleFactor: Int = 1) throws -> UIImage {
+        guard var cgImageBase = self.cgImage else { throw ImageErrors.failedToRetriveCGImage(localizedDescription: "needed CGImage is not Available") }
         
-        let gray = try convertColorSpaceToGrayScale(cgImageTemp)
-        //let cgImage = try convertColorSpaceToRGB(gray)
+        cgImageBase = try convertColorSpaceToRGB(cgImageBase)
+        cgImageBase = try downSample(image: cgImageBase, factor: downSampleFactor)
         
+        var assigner = assignColoredBayer
+        var cgImage: CGImage = cgImageBase
         
-        let width = gray.width
-        let height = gray.height
+        if isGrayScale {
+            assigner = assignGrayScaleBayer
+            cgImage = try convertColorSpaceToGrayScale(cgImageBase)
+        }
         
-        var (imageContext, imageData, bytesPerPixel) = try createContextAndData(cgImage: gray,
-                                                                                bytesPerPixel: bytesPerPixel,
+        let width = cgImage.width
+        let height = cgImage.height
+        
+        var (imageContext, imageData, bytesPerPixel) = try createContextAndData(cgImage: cgImage,
                                                                                 width: width,
                                                                                 height: height)
         
@@ -34,13 +43,13 @@ public extension UIImage {
             imageData.deallocate()
         }
         
-        bayerDither(&imageData,
-                    bayerSize: bayerSize,
-                    width: width,
-                    height: height,
-                    bytesPerPixel: bytesPerPixel,
-                    isBayerInverted: isBayerInverted
-        )
+        genericBayer(&imageData,
+                     bayerSize: bayerSize,
+                     size: (width, height),
+                     numberOfBits: numberOfBits,
+                     bytesPerPixel: bytesPerPixel,
+                     isBayerInverted: isBayerInverted,
+                     assigner: assigner)
         
         guard let outputCGImage = imageContext.makeImage() else {
             throw ImageErrors
@@ -48,7 +57,7 @@ public extension UIImage {
             
         }
         
-        return UIImage(cgImage: outputCGImage, scale: self.scale, orientation: self.imageOrientation)
+        return UIImage(cgImage: outputCGImage, scale: 1, orientation: self.imageOrientation)
     }
     
 }

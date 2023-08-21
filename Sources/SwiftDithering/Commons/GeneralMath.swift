@@ -13,10 +13,10 @@ typealias originalColor = (r: UInt8, g: UInt8, b: UInt8)
 /**
  Calculates the Index for given XY coord with Width and Bytes being the offset. The calculation is (x * width + x ) * bytesPerPixel
  - Parameters:
-  - x: Pixel position in the X axis (Column)
-  - y: Pixel position in the Y axis (Row)
-  - width: Total width of the image
-  - bytesPerPixel: Total amount of bytes for each Pixel in a sRGB this is 4 bytes
+   - x: Pixel position in the X axis (Column)
+   - y: Pixel position in the Y axis (Row)
+   - width: Total width of the image
+   - bytesPerPixel: Total amount of bytes for each Pixel in a sRGB this is 4 bytes
  - Returns: The Index
  */
 internal func indexCalculator(x: Int, y: Int, width: Int, bytesPerPixel: Int) -> Int{
@@ -28,9 +28,9 @@ internal func indexCalculator(x: Int, y: Int, width: Int, bytesPerPixel: Int) ->
  * min: 1, value: 2, max: 5 returns 2;
  * min: 1, value: 7, max: 5 returns 5;
 - Parameters:
-   - min: Minimal value possible for the value;
-   - value: Value to be clamped;
-   - max: Maximum value possible for the value;
+    - min: Minimal value possible for the value;
+    - value: Value to be clamped;
+    - max: Maximum value possible for the value;
  - Returns: The value clamped to the specified range.
  */
 public func clamp<T: Comparable & Numeric>(min minValue:T, value:T, max maxValue:T) -> T {
@@ -56,9 +56,9 @@ internal func getRgbFor( index: Int, inData data: UnsafeMutablePointer<UInt8>) -
 /**
  This function is a helper to substitute the pixel color for given index position for the image buffer
  - Parameters:
-  - imageData; The UInt8 pointer this **must** be in sRGB format, must be in reference format(adding the prefix & to the variable)
-  - index: the base index, as in [getRgbFor](x-source-tag://getRgbFor) will be added to represent all channels
-  - colors; the new Colors to be assinged, they are clamped to 0-255 range when applied to prevent crashes
+   - imageData; The UInt8 pointer this **must** be in sRGB format, must be in reference format(adding the prefix & to the variable)
+   - index: the base index, as in [getRgbFor](x-source-tag://getRgbFor) will be added to represent all channels
+   - colors; the new Colors to be assinged, they are clamped to 0-255 range when applied to prevent crashes
  */
 internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, colors: colorTuple) {
     imageData[index] = UInt8(clamping: colors.r)
@@ -66,15 +66,15 @@ internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, in
     imageData[index + 2] = UInt8(clamping: colors.b)
 }
 
-internal func assignNewColorTo(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, colors: Int) {
+internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, colors: Int) {
     imageData[index] = UInt8(clamping: colors)
 }
 
 /**
  Calculates the nearest reduced color pallete based on the factor
  - Parameters:
-  - oldColor: [original Color](x-source-tag://originalColor) format containing all 3 RGB channels
-  - nearestFactor: The factor for the reduced pallete this is clamped from 0-255 range.
+   - oldColor: [original Color](x-source-tag://originalColor) format containing all 3 RGB channels
+   - nearestFactor: The factor for the reduced pallete this is clamped from 0-255 range.
  - Returns:[color Tuple](x-source-tag://colorTuple) for all 3 channels
  */
 internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) -> colorTuple{

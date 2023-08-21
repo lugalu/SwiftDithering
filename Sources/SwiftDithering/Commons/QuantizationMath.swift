@@ -6,27 +6,38 @@ import Accelerate
 /**
     Treshholds the color at the half point (128)
      - Parameters:
-      - pixelColor: single channel of the pixel to be quantitized
+       - pixelColor: single channel of the pixel to be quantitized
      - Returns: The Thresholded color
  */
-internal func quantitizeGrayScale(pixelColor: UInt8, isInverted: Bool = false) -> UInt8{
+internal func quantitizeGrayScale(pixelColor: UInt8, isInverted: Bool = false, thresholdPoint: UInt8 = 128) -> UInt8{
     if isInverted{
-        return 255 - Int(pixelColor) < 128 ? 0 : 255
+        return 255 - Int(pixelColor) < thresholdPoint ? 0 : 255
     }
     
-    return pixelColor < 128 ? 0 : 255
+    return pixelColor < thresholdPoint ? 0 : 255
+}
+
+internal func randomQuantization(pixelColor: UInt8, isInverted: Bool = false) -> UInt8{
+    var pixelColor = pixelColor
+    let thresholdPoint = 255 - UInt8.random(in: 0...255)
+    
+    if isInverted{
+        pixelColor = UInt8(clamping:  255 - Int(pixelColor))
+    }
+    
+    return pixelColor < thresholdPoint ? 0 : 255
 }
 
 /**
     Applies the quantization to the RGB buffer
     - Parameters:
-     - imageData: the Image buffer in reference formart(Prefix &) and **must** be in RGB format
-     - quantization: [color Tuple](x-source-tag://colorTuple) to multiply
-     - x: X axis (Column) position to be modified
-     - y: Y axis (Row) position to be modified
-     - width: total width of the buffer
-     - bytesPerPixel: offset of the number of channels
-     - errorBias: the bias used to spread the quantization value
+      - imageData: the Image buffer in reference formart(Prefix &) and **must** be in RGB format
+      - quantization: [color Tuple](x-source-tag://colorTuple) to multiply
+      - x: X axis (Column) position to be modified
+      - y: Y axis (Row) position to be modified
+      - width: total width of the buffer
+      - bytesPerPixel: offset of the number of channels
+      - errorBias: the bias used to spread the quantization value
   */
 internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_ quantization: colorTuple, x: Int, y: Int, width: Int, bytesPerPixel: Int, errorBias: Double = 7/16){
     let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
@@ -41,9 +52,9 @@ internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_
 
 /**
  Takes the previoulsy grayScaled image and threshHolds each pixel
-    - Parameters:
+  - Parameters:
      - grayScaleImage: previously converted CGImage
-    - Returns: Tuple of CGContext, ImageData and Bytes per pixel
+  - Returns: Tuple of CGContext, ImageData and Bytes per pixel
  */
 internal func prepareQuantization(grayScaleImage cgImage: CGImage) throws -> (CGContext,UnsafeMutablePointer<UInt8>, Int) {
     let width = cgImage.width
@@ -91,7 +102,7 @@ internal func quantitizeRGB(imageData: UnsafeMutablePointer<UInt8>,index: Int, n
  - Tag: quantitizeRGB
  */
 func quantitizeRGB(color: originalColor, numberOfBits: Int = 2) -> originalColor{
-    
+    var numberOfBits = numberOfBits
     /*
      math behind
      the levels is a left shift of the bits making it jump and deciding the total amount of colors present,
@@ -100,7 +111,9 @@ func quantitizeRGB(color: originalColor, numberOfBits: Int = 2) -> originalColor
      we get the buffer value and convert it to 0-1 rgb space then we multiply by the number of bits, rounding to the nearest Int value
      then we normalize the value then we scale back to 0-255 range.
     */
-    
+    if numberOfBits <= 0 {
+        numberOfBits = 1
+    }
     let levels: Double = Double(1 << numberOfBits) - 1
     
     let r = UInt8(clamping: Int(round(Double(color.r) / 255.0 * levels) / levels * 255.0))
