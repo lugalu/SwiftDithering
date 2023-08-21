@@ -5,14 +5,15 @@ The implementation is done via the Accelerate framework.
 <br>
 ## Examples
 - Bayer 8x8:
-    - <img src= "https://i.imgur.com/6CMZE2w.png"/>
+    <img src= "https://i.imgur.com/6CMZE2w.png"/>
     - Photo by <a href="https://unsplash.com/@andrazlazic?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Andraz Lazic</a> on <a href="https://unsplash.com/photos/5suzgCS6mIc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 <br>
 
 - Floyd-Steinberg:
     - 1-bit:
      <img src="https://i.imgur.com/tyzuqXu.png"/>
-
+    <br>
+    
     - 2-bits:
      <img src="https://i.imgur.com/UOo2bbZ.png"/>
 
