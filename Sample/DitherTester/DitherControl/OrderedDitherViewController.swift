@@ -34,7 +34,7 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
     
         spreadSlider.configure(withTitle: "Spread", minValue: 0.0, maxValue: 1.0, roundValue: 4.0)
         numberOfBitsSlider.configure(withTitle: "Number Of Bits", minValue: 1, maxValue: 16)
-        downscaleSlider.configure(withTitle: "Downscale(2ˆn)", minValue: 0.0, maxValue: 4)
+        downscaleSlider.configure(withTitle: "Downscale(2ˆn)", minValue: 0.0, maxValue: 16)
         setupUI()
 
     }

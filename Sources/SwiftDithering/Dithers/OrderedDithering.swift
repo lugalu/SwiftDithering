@@ -57,7 +57,7 @@ public extension UIImage {
             
         }
         
-        return UIImage(cgImage: outputCGImage, scale: self.scale, orientation: self.imageOrientation)
+        return UIImage(cgImage: outputCGImage, scale: 1, orientation: self.imageOrientation)
     }
     
 }

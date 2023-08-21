@@ -12,7 +12,7 @@ import Accelerate
  - Returns: The downsampled image with the RGB ColorSpace
  */
 public func downSample(image: CGImage, factor: Int = 1) throws -> CGImage{
-    guard factor > 0, let space = image.colorSpace?.name, space == CGColorSpace.sRGB else {
+    guard factor > 0 else {
         return image
     }
     
