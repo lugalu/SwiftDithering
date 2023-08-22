@@ -71,23 +71,6 @@ internal func assignNewColorsTo(imageData: inout UnsafeMutablePointer<UInt8>, in
 }
 
 /**
- Calculates the nearest reduced color pallete based on the factor
- - Parameters:
-   - oldColor: [original Color](x-source-tag://originalColor) format containing all 3 RGB channels
-   - nearestFactor: The factor for the reduced pallete this is clamped from 0-255 range.
- - Returns:[color Tuple](x-source-tag://colorTuple) for all 3 channels
- */
-internal func findClosestPallete(_ oldColor: originalColor, nearestFactor: Int) -> colorTuple{
-    let nearestFactor = UInt8(clamping: nearestFactor - 1)
-    
-    let r =  Int(round(Double(oldColor.r) * Double(nearestFactor)) / Double(nearestFactor))
-    let g =  Int(round(Double(oldColor.g) * Double(nearestFactor)) / Double(nearestFactor))
-    let b =  Int(round(Double(oldColor.b) * Double(nearestFactor)) / Double(nearestFactor))
-    
-    return (r,g,b)
-}
-
-/**
     Simple conversion from UInt8 tuple to Int Tuple
  */
 internal func convertOriginalColor(_ color: originalColor) -> colorTuple{
