@@ -9,7 +9,7 @@ final class DownsamplersTestsCases: XCTestCase {
     override func setUpWithError() throws {
         let pencilImage = UIImage(systemName: "pencil")!
         XCTAssertNotNil(pencilImage.cgImage, "If this fails here the test Image is the culprit not the system")
-        var cgImage = pencilImage.cgImage!
+        let cgImage = pencilImage.cgImage!
         testImage = cgImage
     }
     
