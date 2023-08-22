@@ -33,4 +33,9 @@ final class DownsamplersTestsCases: XCTestCase {
         XCTAssertEqual(newImage.height, testImage.height/2)
         
     }
+    
+    func testColorConverterGrayScale() throws{
+        testImage = try convertColorSpaceToGrayScale(testImage)
+    }
+    
 }
