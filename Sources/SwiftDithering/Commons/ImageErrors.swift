@@ -7,4 +7,5 @@ public enum ImageErrors: Error{
     case failedToCreateContext(localizedDescription:String)
     case failedToOutputImage(localizedDescription:String)
     case failedToConvertimage(localizedDescription:String)
+    case failedToDownsample(localizedDescription: String)
 }

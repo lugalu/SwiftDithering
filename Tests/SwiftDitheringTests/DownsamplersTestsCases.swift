@@ -16,6 +16,8 @@ final class DownsamplersTestsCases: XCTestCase {
     
     func testColorConverterRGB() throws{
         testImage = try convertColorSpaceToRGB(testImage)
+        
+        XCTAssertNotNil(testImage)
     }
     
     func testDownsamplerWithoutDownsampling() throws{
@@ -23,19 +25,23 @@ final class DownsamplersTestsCases: XCTestCase {
         
         XCTAssertEqual(newImage.width, testImage.width)
         XCTAssertEqual(newImage.height, testImage.height)
-        
     }
 
     func testDownsamplerHalvingTheImage() throws{
         let newImage = try downSample(image: testImage, factor: 1)
-        
+     
         XCTAssertEqual(newImage.width, testImage.width/2)
         XCTAssertEqual(newImage.height, testImage.height/2)
-        
+    }
+    
+    
+    func testDownsamplerErrorThrow() throws{
+       XCTAssertThrowsError(try downSample(image: testImage, factor: 10))
     }
     
     func testColorConverterGrayScale() throws{
         testImage = try convertColorSpaceToGrayScale(testImage)
+        XCTAssertNotNil(testImage)
     }
     
 }
