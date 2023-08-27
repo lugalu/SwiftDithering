@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "618E330F-5450-43D8-B7ED-DF5588B27BA3",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SwiftDitheringTests",
+        "name" : "SwiftDitheringTests"
+      }
+    }
+  ],
+  "version" : 1
+}

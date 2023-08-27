@@ -51,33 +51,6 @@ internal func applyQuantization(_ imageData: inout UnsafeMutablePointer<UInt8>,_
 }
 
 /**
- Takes the previoulsy grayScaled image and threshHolds each pixel
-  - Parameters:
-     - grayScaleImage: previously converted CGImage
-  - Returns: Tuple of CGContext, ImageData and Bytes per pixel
- */
-internal func prepareQuantization(grayScaleImage cgImage: CGImage) throws -> (CGContext,UnsafeMutablePointer<UInt8>, Int) {
-    let width = cgImage.width
-    let height = cgImage.height
-    
-    let (imageContext, grayImageData, bytesPerPixel) = try createContextAndData(cgImage: cgImage, width: cgImage.width, height: cgImage.height)
-    
-    for y in 0..<height{
-        for x in 0..<width{
-            let index = indexCalculator(x: x, y: y, width: width, bytesPerPixel: bytesPerPixel)
-            
-            let newColor = quantitizeGrayScale(pixelColor: grayImageData[index])
-            
-            grayImageData[index] = newColor
-            
-        }
-    }
-    
-    return (imageContext,grayImageData, bytesPerPixel)
-}
-
-
-/**
  Takes the image Data in RGB format and calculates the quantization of given index, thanks to this function it generates a color banding in the image.
     - Parameters:
       - imageData: the image buffer to be quantitized

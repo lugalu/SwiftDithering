@@ -1,0 +1,27 @@
+name: iOS Test Workflow
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    name: Build and Test default scheme using iPhone/iPad simulator
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Force Xcode 11
+        run: sudo xcode-select -switch /Applications/Xcode_11.7.app
+      - name: iOS build setup
+        run: >-
+          xcodebuild test -workspace TestApp.xcodeproj/project.xcworkspace
+          -scheme TestApp -destination 'platform=iOS Simulator,name=iPhone
+          11,OS=13.7'
+      - name: testing ... iPhone 11
+        run: >-
+          xcodebuild test -workspace TestApp.xcodeproj/project.xcworkspace
+          -scheme TestApp -destination 'platform=iOS Simulator,name=iPhone
+          11,OS=13.7'
