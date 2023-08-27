@@ -2,30 +2,24 @@ name: iOS Test Workflow
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
   workflow_dispatch:
-    branches:
-      - master
+      branches:
+      - main
 
 jobs:
   build:
-    name: Build and Test default scheme using iPhone/iPad simulator
+
     runs-on: macos-latest
+
+    name: Unit Testing on iOS 16.2
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Force Xcode 11
-        run: sudo xcode-select -switch /Applications/Xcode_11.7.app
-      - name: iOS build setup
-        run: >-
-          xcodebuild test -workspace TestApp.xcodeproj/project.xcworkspace
-          -scheme TestApp -destination 'platform=iOS Simulator,name=iPhone
-          11,OS=13.7'
-      - name: testing ... iPhone 11
-        run: >-
-          xcodebuild test -workspace TestApp.xcodeproj/project.xcworkspace
-          -scheme TestApp -destination 'platform=iOS Simulator,name=iPhone
-          11,OS=13.7'
+    - uses: actions/checkout@v3
+    - name: Select Xcode
+      run: sudo xcode-select -switch /Applications/Xcode.app && /usr/bin/xcodebuild -version
+    - name: Build and run tests
+      run: xcodebuild test -scheme SwiftDithering -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.2' | xcpretty && exit ${PIPESTATUS[0]}
