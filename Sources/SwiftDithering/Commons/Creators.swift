@@ -62,8 +62,9 @@ internal func createCGImage(source: vImage_CGImageFormat, destination: vImage_CG
 
     }
     
-    var destinationBuffer = try vImage_Buffer( size: sourceBuffer.size,
-                                               bitsPerPixel: destination.bitsPerPixel)
+    var destinationBuffer = try vImage_Buffer(width: Int(sourceBuffer.width),
+                                              height: Int(sourceBuffer.height),
+                                              bitsPerPixel: destination.bitsPerPixel)
     
     defer {
         destinationBuffer.free()
