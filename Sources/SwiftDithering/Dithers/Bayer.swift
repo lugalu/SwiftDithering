@@ -94,7 +94,7 @@ internal func genericBayer(_ imageData: inout UnsafeMutablePointer<UInt8>, bayer
       - isInverted: if set to On it inverts the average color of the image making it darker if it was white and vice versa
       - numberOfBits: in this assigner it's ignored
  */
-internal func assignGrayScaleBayer(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, deviation: UInt8, isInverted: Bool, numberOfBits: Int = 0) {
+internal func assignGrayScaleOrderedDithering(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, deviation: UInt8, isInverted: Bool, numberOfBits: Int = 0) {
     let pixelColor = imageData[index].addingReportingOverflow(deviation).partialValue
     let quantitizedValue = Int(quantitizeGrayScale(pixelColor: pixelColor, isInverted: isInverted))
    assignNewColorsTo(imageData: &imageData, index: index, colors: quantitizedValue)
@@ -109,7 +109,7 @@ internal func assignGrayScaleBayer(imageData: inout UnsafeMutablePointer<UInt8>,
       - isInverted: in this assigner it's ignored
       - numberOfBits: the number of colors allowed when calculated we remove -1
  */
-internal func assignColoredBayer(imageData: inout UnsafeMutablePointer<UInt8>,
+internal func assignColoredOrderedDithering(imageData: inout UnsafeMutablePointer<UInt8>,
                                index: Int,
                                deviation: UInt8,
                                isInverted: Bool,
