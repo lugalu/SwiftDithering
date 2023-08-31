@@ -97,7 +97,6 @@ public extension UIImage {
         
         cgImage = try convertColorSpaceToRGB(cgImage)
         cgImage = try downSample(image: cgImage, factor: downSampleFactor)
-       
         var assigner = assignColoredOrderedDithering
         
         if isGrayScale {
@@ -167,7 +166,7 @@ func genericOrderedDither(imageData: inout UnsafeMutablePointer<UInt8>,
                           bytesPerPixel: Int,
                           spread: Double,
                           isInverted: Bool,
-                          assigner: @escaping (inout UnsafeMutablePointer<UInt8>, Int, UInt8, Bool, Int) -> Void){
+                          assigner: @escaping (inout UnsafeMutablePointer<UInt8>, Int, Int, Bool, Int) -> Void){
     
 #if DEBUG
     let start = CFAbsoluteTimeGetCurrent()
@@ -189,7 +188,7 @@ func genericOrderedDither(imageData: inout UnsafeMutablePointer<UInt8>,
         threshold *= 255
         
         //The deviation of color basic color banding
-        let calculatedDeviation = UInt8(clamping: Int(spread * threshold))
+        let calculatedDeviation =  Int(spread * threshold)
         
         assigner(&imageData, index, calculatedDeviation, isInverted, numberOfBits)
     }

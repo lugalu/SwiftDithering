@@ -94,8 +94,9 @@ internal func genericBayer(_ imageData: inout UnsafeMutablePointer<UInt8>, bayer
       - isInverted: if set to On it inverts the average color of the image making it darker if it was white and vice versa
       - numberOfBits: in this assigner it's ignored
  */
-internal func assignGrayScaleOrderedDithering(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, deviation: UInt8, isInverted: Bool, numberOfBits: Int = 0) {
-    let pixelColor = imageData[index].addingReportingOverflow(deviation).partialValue
+internal func assignGrayScaleOrderedDithering(imageData: inout UnsafeMutablePointer<UInt8>, index: Int, deviation: Int, isInverted: Bool, numberOfBits: Int = 0) {
+    
+    let pixelColor =  UInt8(clamping: Int(imageData[index]) + deviation)
     let quantitizedValue = Int(quantitizeGrayScale(pixelColor: pixelColor, isInverted: isInverted))
    assignNewColorsTo(imageData: &imageData, index: index, colors: quantitizedValue)
 }
@@ -111,15 +112,16 @@ internal func assignGrayScaleOrderedDithering(imageData: inout UnsafeMutablePoin
  */
 internal func assignColoredOrderedDithering(imageData: inout UnsafeMutablePointer<UInt8>,
                                index: Int,
-                               deviation: UInt8,
+                               deviation: Int,
                                isInverted: Bool,
                                numberOfBits: Int
 ) {
     let originalPixel = getRgbFor(index: index, inData: imageData)
     
-    let r = originalPixel.r.addingReportingOverflow(deviation).partialValue
-    let g = originalPixel.g.addingReportingOverflow(deviation).partialValue
-    let b = originalPixel.b.addingReportingOverflow(deviation).partialValue
+   
+    let r = UInt8(clamping: Int(originalPixel.r) + deviation)
+    let g = UInt8(clamping: Int(originalPixel.g) + deviation)
+    let b = UInt8(clamping: Int(originalPixel.b) + deviation)
     
     let quantitizedValue = quantitizeRGB(color: (r,g,b),numberOfBits: numberOfBits)
     

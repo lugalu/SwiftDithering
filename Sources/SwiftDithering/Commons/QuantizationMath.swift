@@ -11,7 +11,7 @@ import Accelerate
  */
 internal func quantitizeGrayScale(pixelColor: UInt8, isInverted: Bool = false, thresholdPoint: UInt8 = 128) -> UInt8{
     if isInverted{
-        return 255 - Int(pixelColor) < thresholdPoint ? 0 : 255
+        return abs(255 - Int(pixelColor)) < thresholdPoint ? 0 : 255
     }
     
     return pixelColor < thresholdPoint ? 0 : 255
@@ -22,7 +22,7 @@ internal func randomQuantization(pixelColor: UInt8, isInverted: Bool = false) ->
     let thresholdPoint = 255 - UInt8.random(in: 0...255)
     
     if isInverted{
-        pixelColor = UInt8(clamping:  255 - Int(pixelColor))
+        pixelColor = UInt8(clamping:  abs(255 - Int(pixelColor)))
     }
     
     return pixelColor < thresholdPoint ? 0 : 255

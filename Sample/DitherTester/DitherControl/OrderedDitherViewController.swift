@@ -40,7 +40,7 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
     }
     
     func retrivedDitheredImage(for image: UIImage?) throws -> UIImage? {
-        var bayer: BayerSizes
+        var ditherType: OrderedDitheringTypes
         let isInverted = inversionSelector.retrieveValue()
         let isColored = !isColoredSelector.retrieveValue()
         let spread = spreadSlider.retrieveValue()
@@ -49,16 +49,24 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
         
         switch (matrixSelector.retrieveValue()){
         case 0:
-            bayer = .bayer2x2
+            ditherType = .bayer(size: .bayer2x2)
         case 1:
-            bayer = .bayer4x4
+            ditherType = .bayer(size: .bayer4x4)
         case 2:
-            bayer = .bayer8x8
+            ditherType = .bayer(size: .bayer8x8)
+        case 3:
+            ditherType = .clusteredDots
+        case 4:
+            ditherType = .centralWhitePoint
+        case 5:
+            ditherType = .balancedCenteredPoint
+        case 6:
+            ditherType = .diagonalOrdered
         default:
             return nil
         }
         
-        return try image?.applyOrderedDither(withSize: bayer, isBayerInverted: isInverted, isGrayScale: isColored, spread: spread, numberOfBits: numberOfBits, downSampleFactor: downscaleFactor)
+        return try image?.applyOrderedDither(withType: ditherType, isInverted: isInverted, isGrayScale: isColored, spread: spread, numberOfBits: numberOfBits, downSampleFactor: downscaleFactor)
     }
 }
 
@@ -168,7 +176,7 @@ extension OrderedDitherViewController: UIPickerViewDelegate, UIPickerViewDataSou
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return 3
+        return 7
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
@@ -179,9 +187,25 @@ extension OrderedDitherViewController: UIPickerViewDelegate, UIPickerViewDataSou
             return "4x4"
         case 2:
             return "8x8"
+        case 3:
+            return "Clustered Dots"
+        case 4:
+            return "Central Point"
+        case 5:
+            return "Balanced Point"
+        case 6:
+            return "Diagonal Ordered"
         default:
             return nil
         }
+        
+        /*
+         case bayer(size: BayerSizes)
+         case clusteredDots
+         case centralWhitePoint
+         case balancedCenteredPoint
+         case diagonalOrdered
+        */
     }
     
     
