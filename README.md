@@ -54,18 +54,20 @@ Currently Features:
  - Fixed Threshold
  - Random Threshold
  - Uniform Threshold
- 
- <br>
- 
-Planned Dithers:
  - Clustered Dots
  - Central White point
  - Balanced Centered point
  
+ <br>
+ 
+Planned Dithers:
+ - Diagonal clustered
+ - Make all of them a CI filter
+ 
 <br>
 
 Maybe Will be added:
- - Diagonal clustered
+ - Nothing for now
  
 <br>
 
