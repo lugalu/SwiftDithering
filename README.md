@@ -1,7 +1,11 @@
 # SwiftDithering
 
+![Static Badge](https://img.shields.io/badge/Platform_Compatibility-iOS-orange)
+
 This is a library focused on bringing dithering to Swift since the CIFilter for dither is mostly noise.
 The implementation is done via the Accelerate framework.
+
+![Static Badge](https://img.shields.io/badge/Platform_Compatibility-iOS-orange)
 <br>
 ## Examples
 - Bayer 8x8:
