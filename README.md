@@ -57,17 +57,17 @@ Currently Features:
  - Clustered Dots
  - Central White point
  - Balanced Centered point
+- Diagonal clustered
  
  <br>
  
 Planned Dithers:
- - Diagonal clustered
- - Make all of them a CI filter
+ - No Extra dither for now, since I don't know any other technique
  
 <br>
 
 Maybe Will be added:
- - Nothing for now
+ - CIFilter, the lack of Obj-C knowledge prevents me from doing it for now.
  
 <br>
 
