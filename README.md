@@ -43,7 +43,7 @@ function yourFunction() {
   
 }
 ```
-the functions also have more accessible parameters, but for simplicity this example does not, for more details check the Sample/DitherTester/DitherControl and go to any of the retrivedDitheredImages
+the functions also have more accessible parameters, but for simplicity, this example does not, For more details check the Sample/DitherTester/DitherControl and go to any of the retrivedDitheredImages
 
 
 ## Plans And Features
@@ -71,18 +71,10 @@ Planned Dithers:
 Maybe Will be added:
  - CIFilter, the lack of Obj-C knowledge prevents me from doing it for now.
  
-<br>
-
- Others:
- - Documentation and examples outside what the code already provides
- - Tags, tests, and releases automation in Github
- - Cocoa pods integration
- - Small test project with some images Pre-loaded and the ability to add your own from the gallery.
- - Downgrade Minimum version since there's nothing that should be bound to older devices
  
 <br>
 
  ## Considerations
 * Since all runs on the CPU they are calculated as sequential and are expensive so tasks and loadings are needed for the user UI.
 * Feel free to suggest performance improvements and report any bug that you may find while using this lib
-* These dithers are based on the [matlab article stored in the archive.today](https://archive.ph/71e9G) and other researches
+* These dithers are based on the [matlab article stored in the archive.today](https://archive.ph/71e9G) and other research
