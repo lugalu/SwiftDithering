@@ -3,6 +3,7 @@
 import XCTest
 @testable import SwiftDithering
 
+#if os(iOS)
 final class DownsamplersTestsCases: XCTestCase {
     var testImage: CGImage = UIImage(systemName: "pencil")!.cgImage!
     
@@ -45,4 +46,4 @@ final class DownsamplersTestsCases: XCTestCase {
     }
     
 }
-//
+#endif

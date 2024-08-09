@@ -1,6 +1,6 @@
 //  Created by Lugalu on 18/07/23.
 
-import UIKit
+import Foundation
 
 /// Original Color is a tuple containing the three main channels (RGB) in UInt8 format, respecting the 0-255 color range.
 /// - Tag: colorTuple

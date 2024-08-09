@@ -388,7 +388,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = G8P85U8XP2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DitherTester/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "To Save The Beautiful Images You Dithered To Your Gallery In Full Resolution";
@@ -419,7 +419,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = G8P85U8XP2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DitherTester/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "To Save The Beautiful Images You Dithered To Your Gallery In Full Resolution";
@@ -470,7 +470,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lugalu/SwiftDithering";
 			requirement = {
-				kind = upToNextMinorVersion;
+				kind = upToNextMajorVersion;
 				minimumVersion = 1.1.0;
 			};
 		};

@@ -1,4 +1,5 @@
 //  Created by Lugalu on 18/07/23.
+#if os(iOS)
 
 import UIKit
 
@@ -198,4 +199,6 @@ func genericOrderedDither(imageData: inout UnsafeMutablePointer<UInt8>,
 #endif
     
 }
+
+#endif
 
