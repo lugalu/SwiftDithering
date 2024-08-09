@@ -116,18 +116,16 @@ final class GeneralMathTests: XCTestCase {
         
         func bayerValue(x:Int, y:Int, n: Int) -> Int{
             if n == 1 {
-                let res = [[0,2],[3,1]][y][x]
-                print("exit",x,y,res)
+                let res = abs(x * 2 - 3 * y)
                 return res
             }
-            let factor = NSDecimalNumber(decimal: pow(2, n-1)).intValue
+            
+            let factor = NSDecimalNumber(decimal: pow(2, n)).intValue
             let x = x % factor
             let y = y % factor
             
             let half = NSDecimalNumber(decimal: pow(2, n-1)).intValue
-            print("half",half)
             let quadrant: Int =  {
-                print(half , x ,y)
                 if x < half && y < half {
                     return 0
                 }
@@ -142,29 +140,23 @@ final class GeneralMathTests: XCTestCase {
                 
                return 1
             }()
-            
-            /*
-            
-             */
-            print("quad", quadrant)
-            
+                        
             let newX = x % half
             let newY = y % half
-            print("mods", newX, newY)
-            print("////")
             
             let res = 4 * bayerValue(x: newX, y: newY, n: n-1) + quadrant
-            print("res",res, quadrant)
             return res
         }
         
-        var x = 1920
-        var y = 1080
-        var n = 3
-        var bayer = BayerSizes.bayer8x8
+        let n = 3
+        let bayer = BayerSizes.bayer8x8
         
-        var test = bayerValue(x: x , y: y, n: n)
-        XCTAssertEqual(UInt8(clamping:test), bayer.getBayerMatrix()[y%8][x%8])
+        for y in 0...50{
+            for x in 0...50 {
+                let test = bayerValue(x: x , y: y, n: n)
+                XCTAssertEqual(UInt8(clamping:test), bayer.getBayerMatrix()[y%8][x%8])
+            }
+        }
         
     }
     

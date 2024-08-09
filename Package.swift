@@ -21,9 +21,14 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftDithering",
-            dependencies: []),
+            dependencies: [],
+            cSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
+        ),
+
         .testTarget(
             name: "SwiftDitheringTests",
-            dependencies: ["SwiftDithering"]),
+            dependencies: ["SwiftDithering"],
+            swiftSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
+        ),
     ]
 )
