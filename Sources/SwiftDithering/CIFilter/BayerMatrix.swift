@@ -6,16 +6,16 @@ import Foundation
  N should be the power of the matrix (1 = 2x2, 2=4x4, 3=8x8)
 */
 let bayerMatrixCalculation: String = """
-int getQuadrant(int x, int y, int half){
-    if (x < half && y < half) {
+int getQuadrant(int x, int y, int half_n){
+    if (x < half_n && y < half_n) {
         return 0;
     }
     
-    if (x >= half && y < half) {
+    if (x >= half_n && y < half_n) {
         return 2;
     }
 
-    if (x < half && y >= half) {
+    if (x < half_n && y >= half_n) {
         return 3;
     }
 
@@ -24,19 +24,19 @@ int getQuadrant(int x, int y, int half){
 
 
 int getMatrixValue(int x, int y, int n){
-    if(n == 1) {
-        return abs( 2 * x - 3 * y);
+    if(n <= 1) {
+        return int(abs( 2.0 * float(x) - 3.0 * float(y)));
     }
 
-    int half = pow(2, n-1);
-    int factor = pow(2, n);
+    int half_n = int(pow(2.0, float(n-1) ));
+    int factor = int(pow(2.0, float(n) ));
     int newX = x % factor;
     int newY = y % factor;
 
-    int quadrant = getQuadrant(x,y,half);
-    newX = newX % half;
-    newY = newY % half;
+    int quadrant = getQuadrant(newX,newY,half_n);
+    newX = newX % half_n;
+    newY = newY % half_n;
 
-    return 4 * getMatrixValue(x,y,n-1) + quadrant;
+    return 4 * getMatrixValue(newX,newY,n-1) + quadrant;
 }
 """

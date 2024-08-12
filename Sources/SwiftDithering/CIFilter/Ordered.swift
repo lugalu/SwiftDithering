@@ -24,6 +24,7 @@ public class OrderedDithering: CIFilter {
             let filter = CIFilter(name: "CIColorMonochrome")
             filter?.setValue(input, forKey: "inputImage")
             filter?.setValue(CIColor(red: 0.7, green: 0.7, blue: 0.7), forKey: "inputColor")
+            
             filter?.setValue(1.0, forKey: "inputIntensity")
                 
             guard let out = filter?.outputImage else { return nil }
