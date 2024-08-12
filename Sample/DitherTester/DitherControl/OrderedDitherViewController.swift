@@ -4,33 +4,26 @@ import UIKit
 import SwiftDithering
 
 class OrderedDitherViewController: UIViewController, DitherControlProtocol {
-    let scrollView: UIScrollView = {
-        let scroll = UIScrollView()
-        scroll.autoresizingMask = .flexibleHeight
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        scroll.showsHorizontalScrollIndicator = false
-        return scroll
-    }()
     
     let matrixSelector = CustomMenuComponent()
-    let inversionSelector = CustomToggleComponent()
+    let isGPUSelector = CustomToggleComponent()
     let isColoredSelector = CustomToggleComponent()
+    let inversionSelector = CustomToggleComponent()
     let spreadSlider = CustomSliderComponent()
     let numberOfBitsSlider = CustomSliderComponent()
     let downscaleSlider = CustomSliderComponent()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        matrixSelector.configure(withTitle: "Bayer Matrix Size", pickerOwner: self)
-        inversionSelector.configure(withTitle: "Should Invert")
+        matrixSelector.configure(withTitle: "Bayer Matrix Size", menuContent: ["bayer 2x2", "bayer 4x4", "bayer 8x8"])
+
+        isGPUSelector.configure(withTitle: "Use GPU?")
+        isGPUSelector.toggle.setOn(true, animated: true)
         
         isColoredSelector.configure(withTitle: "Image Is Colored")
         isColoredSelector.toggle.setOn(true, animated: true)
+        
+        inversionSelector.configure(withTitle: "Should Invert")
     
         spreadSlider.configure(withTitle: "Spread", minValue: 0.0, maxValue: 1.0, roundValue: 4.0)
         numberOfBitsSlider.configure(withTitle: "Number Of Bits", minValue: 1, maxValue: 16)
@@ -43,6 +36,7 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
         var ditherType: OrderedDitheringTypes
         let isInverted = inversionSelector.retrieveValue()
         let isColored = !isColoredSelector.retrieveValue()
+        let usesGPU = isGPUSelector.retrieveValue()
         let spread = spreadSlider.retrieveValue()
         let numberOfBits = Int(numberOfBitsSlider.retrieveValue())
         let downscaleFactor = Int(downscaleSlider.retrieveValue())
@@ -66,6 +60,14 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
             return nil
         }
         
+        if usesGPU {
+            let filter = OrderedDithering()
+            let img = image?.ciImage ?? CIImage(image: image ?? UIImage(systemName: "pencil")! )
+            
+            filter.setValue(img, forKey: "inputImage")
+            guard let ciImg = filter.outputImage else { return nil }
+            return UIImage(ciImage: ciImg)
+        }
         return try image?.applyOrderedDither(withType: ditherType, isInverted: isInverted, isGrayScale: isColored, spread: spread, numberOfBits: numberOfBits, downSampleFactor: downscaleFactor)
     }
 }
@@ -74,55 +76,42 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
 extension OrderedDitherViewController{
     func setupUI(){
         addSubviews()
-        addScrollViewConstraints()
         addPickerConstraints()
-        addInversionConstraints()
+        addIsGPUConstraints()
         addIsColoredConstraints()
+        addInversionConstraints()
         addSpreadConstraints()
         addNumberOfBitsConstraints()
         addDownscaleConstraints()
     }
     
     func addSubviews(){
-        view.addSubview(scrollView)
-        scrollView.addSubview(matrixSelector)
-        scrollView.addSubview(inversionSelector)
-        scrollView.addSubview(isColoredSelector)
-        scrollView.addSubview(spreadSlider)
-        scrollView.addSubview(numberOfBitsSlider)
-        scrollView.addSubview(downscaleSlider)
+        view.addSubview(matrixSelector)
+        view.addSubview(isGPUSelector)
+        view.addSubview(isColoredSelector)
+        view.addSubview(inversionSelector)
+        view.addSubview(spreadSlider)
+        view.addSubview(numberOfBitsSlider)
+        view.addSubview(downscaleSlider)
     }
     
-    func addScrollViewConstraints(){
-        let constraints = [
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            scrollView.contentLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.contentLayoutGuide.topAnchor.constraint(equalTo: view.topAnchor)
-        ]
-        
-        NSLayoutConstraint.activate(constraints)
-    }
+
     
     func addPickerConstraints(){
         let constraints = [
-            matrixSelector.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 8),
-            matrixSelector.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -8),
-            matrixSelector.topAnchor.constraint(equalTo: scrollView.topAnchor,constant: 8)
+            matrixSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            matrixSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -8),
+            matrixSelector.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 8)
         ]
         
         NSLayoutConstraint.activate(constraints)
     }
     
-    func addInversionConstraints(){
+    func addIsGPUConstraints(){
         let constraints = [
-            inversionSelector.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 8),
-            inversionSelector.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -8),
-            inversionSelector.topAnchor.constraint(equalTo: matrixSelector.bottomAnchor,constant: 8)
+            isGPUSelector.topAnchor.constraint(equalTo: matrixSelector.bottomAnchor,constant: 8),
+            isGPUSelector.leadingAnchor.constraint(equalTo: matrixSelector.leadingAnchor),
+            isGPUSelector.trailingAnchor.constraint(equalTo: matrixSelector.trailingAnchor)
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -130,19 +119,30 @@ extension OrderedDitherViewController{
     
     func addIsColoredConstraints(){
         let constraints = [
-            isColoredSelector.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 8),
-            isColoredSelector.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -8),
-            isColoredSelector.topAnchor.constraint(equalTo: inversionSelector.bottomAnchor,constant: 8)
+            isColoredSelector.topAnchor.constraint(equalTo: isGPUSelector.bottomAnchor,constant: 8),
+            isColoredSelector.leadingAnchor.constraint(equalTo: matrixSelector.leadingAnchor),
+            isColoredSelector.trailingAnchor.constraint(equalTo: matrixSelector.trailingAnchor)
         ]
         
         NSLayoutConstraint.activate(constraints)
     }
     
+    func addInversionConstraints(){
+        let constraints = [
+            inversionSelector.topAnchor.constraint(equalTo: isColoredSelector.bottomAnchor, constant: 8),
+            inversionSelector.leadingAnchor.constraint(equalTo: matrixSelector.leadingAnchor),
+            inversionSelector.trailingAnchor.constraint(equalTo: matrixSelector.trailingAnchor)
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    
     func addSpreadConstraints(){
         let constraints = [
-            spreadSlider.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 8),
-            spreadSlider.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -8),
-            spreadSlider.topAnchor.constraint(equalTo: isColoredSelector.bottomAnchor,constant: 8)
+            spreadSlider.topAnchor.constraint(equalTo: inversionSelector.bottomAnchor,constant: 8),
+            spreadSlider.leadingAnchor.constraint(equalTo:  matrixSelector.leadingAnchor),
+            spreadSlider.trailingAnchor.constraint(equalTo: matrixSelector.trailingAnchor),
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -150,9 +150,9 @@ extension OrderedDitherViewController{
     
     func addNumberOfBitsConstraints(){
         let constraints = [
-            numberOfBitsSlider.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 8),
-            numberOfBitsSlider.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -8),
-            numberOfBitsSlider.topAnchor.constraint(equalTo: spreadSlider.bottomAnchor,constant: 8)
+            numberOfBitsSlider.topAnchor.constraint(equalTo: spreadSlider.bottomAnchor,constant: 8),
+            numberOfBitsSlider.leadingAnchor.constraint(equalTo:  matrixSelector.leadingAnchor),
+            numberOfBitsSlider.trailingAnchor.constraint(equalTo: matrixSelector.trailingAnchor),
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -160,10 +160,9 @@ extension OrderedDitherViewController{
     
     func addDownscaleConstraints(){
         let constraints = [
-            downscaleSlider.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 8),
-            downscaleSlider.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -8),
             downscaleSlider.topAnchor.constraint(equalTo: numberOfBitsSlider.bottomAnchor,constant: 8),
-            downscaleSlider.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -8)
+            downscaleSlider.leadingAnchor.constraint(equalTo: matrixSelector.leadingAnchor),
+            downscaleSlider.trailingAnchor.constraint(equalTo: matrixSelector.trailingAnchor )
         ]
         
         NSLayoutConstraint.activate(constraints)

@@ -14,7 +14,7 @@ class ThresholdingViewController: UIViewController, DitherControlProtocol {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupUI()
-        thresholdingSelector.configure(withTitle: "thresholding Type", pickerOwner: self)
+        thresholdingSelector.configure(withTitle: "thresholding Type", menuContent: ["standart"])
         
         thresholdingPoint.configure(withTitle: "Threshold", minValue: 0, maxValue: 255)
         //thresholdingPoint.slider.value = 128
@@ -89,8 +89,7 @@ extension ThresholdingViewController {
         let constraints = [
             thresholdingSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             thresholdingSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            thresholdingSelector.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
-            thresholdingSelector.bottomAnchor.constraint(equalTo: view.centerYAnchor, constant: -16)
+            thresholdingSelector.topAnchor.constraint(equalTo: view.topAnchor, constant: 8)
         ]
         
         NSLayoutConstraint.activate(constraints)

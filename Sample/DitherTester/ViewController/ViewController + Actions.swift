@@ -35,11 +35,6 @@ extension ViewController{
         imageView.image = galleyImage ?? defaultImage
     }
     
-    @objc func restoreDefaultImage(){
-        imageView.image = defaultImage
-        galleyImage = nil
-    }
-    
     func onOptionChange(){
         guard let vc = self.pageViewController(ditherOptions, viewControllerBefore: ditherOptions.viewControllers?.first ?? UIViewController()) else { return }
         

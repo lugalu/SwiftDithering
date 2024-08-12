@@ -35,7 +35,7 @@ class ErrorDifusionViewController: UIViewController, DitherControlProtocol {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupUI()
-        difusionSelector.configure(withTitle: "Difusion Type", pickerOwner: self)
+        difusionSelector.configure(withTitle: "Difusion Type", menuContent: ["floyd"])
         bitSelector.configure(withTitle: "Number of bits", minValue: 1.0, maxValue: 16.0)
         fastSelector.configure(withTitle: "Should Multithread")
     }
@@ -61,8 +61,7 @@ extension ErrorDifusionViewController{
         let constraints = [
             difusionSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             difusionSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -8),
-            difusionSelector.topAnchor.constraint(equalTo: view.topAnchor,constant: 8),
-            difusionSelector.bottomAnchor.constraint(equalTo: view.centerYAnchor, constant: -15)
+            difusionSelector.topAnchor.constraint(equalTo: view.topAnchor,constant: 8)
         ]
         
         NSLayoutConstraint.activate(constraints)

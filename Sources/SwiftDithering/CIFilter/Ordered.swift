@@ -8,6 +8,7 @@ public class OrderedDithering: CIFilter {
     @objc dynamic var matrixSize: Int = 3
     /// How much to downsample, also represents 2ˆn
     @objc dynamic var downsampleFactor: Int = 2
+    @objc dynamic var spread: Float = 0.5
     @objc dynamic var hasColor: Bool = true
     @objc dynamic var numberOfBits: Int = 2
     
@@ -40,10 +41,15 @@ public class OrderedDithering: CIFilter {
         
         
         let kernel = CIKernel(source: bayerMatrixCalculation + orderedKernel)!
-        let test = kernel.apply(extent: input.extent, roiCallback: callback, arguments: [])
+        //sampler s, int factor, float spread, int numberOfBits
+        let out = kernel.apply(extent: input.extent, roiCallback: callback, arguments: [
+            input,
+            matrixSize,
+            spread,
+            numberOfBits
+        ])
         let upscale = CGAffineTransform(scaleX: CGFloat(1 << downsampleFactor), y: CGFloat(1 << downsampleFactor))
-        input = input.transformed(by: upscale)
-        return input
+        return  out?.transformed(by: upscale)
     }
 }
 

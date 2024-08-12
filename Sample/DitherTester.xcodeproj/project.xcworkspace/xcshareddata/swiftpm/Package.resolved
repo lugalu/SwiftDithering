@@ -1,14 +1,15 @@
 {
+  "originHash" : "dc0cb2dabd991326a92cff9395b961697d438933bc5b53f6136a49b013002d58",
   "pins" : [
     {
       "identity" : "swiftdithering",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/lugalu/SwiftDithering",
       "state" : {
-        "revision" : "58951dcb6295aacbdf5c9b07e45b000f785d2cd5",
-        "version" : "1.3.0"
+        "branch" : "feat/CIFilter",
+        "revision" : "f46ea70c5a1b8e928457ff8d8138da22cfdecfea"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

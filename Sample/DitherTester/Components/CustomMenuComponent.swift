@@ -2,12 +2,16 @@
 
 import UIKit
 
-class CustomMenuComponent: UIView{
+class CustomMenuComponent: UIView {
     
-    let picker: UIPickerView = {
-        let picker = UIPickerView()
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        return picker
+    private var selected: Int = 0
+    
+    let button: UIButton = {
+        let btn = UIButton(configuration: .tinted(), primaryAction: nil)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.showsMenuAsPrimaryAction = true
+        btn.changesSelectionAsPrimaryAction = true
+        return btn
     }()
     
     let label: UILabel = {
@@ -16,28 +20,35 @@ class CustomMenuComponent: UIView{
         return label
     }()
     
-    func configure(withTitle title: String, pickerOwner: UIPickerViewDelegate & UIPickerViewDataSource){
-        label.text = title
-        picker.delegate = pickerOwner
-        picker.dataSource = pickerOwner
-        picker.selectRow(0, inComponent: 0, animated: true)
-        
-        self.addSubview(label)
-        self.addSubview(picker)
-        
-        
+    func configure(withTitle title: String, menuContent: [String]){
         self.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(label)
+        self.addSubview(button)
+        label.text = title
         
+        let menuAction = { (action: UIAction) in
+            guard let title = (action.sender as? UIButton)?.titleLabel?.text, let idx = menuContent.firstIndex(of: title) else {
+                print("ops")
+                return
+            }
+            let val = menuContent.distance(from: 0, to: idx)
+            self.selected = val
+        }
+        
+        let menuChildren = menuContent.map({ UIAction(title: $0, handler: menuAction) }) as [UIMenuElement]
+        
+        button.menu = UIMenu(options: .singleSelection, children: menuChildren)
+    
         let constraints = [
             label.topAnchor.constraint(equalTo: self.topAnchor),
             label.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             label.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             label.rightAnchor.constraint(equalTo: self.centerXAnchor, constant: -16),
-            
-            picker.topAnchor.constraint(equalTo: self.topAnchor),
-            picker.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            picker.leftAnchor.constraint(equalTo: label.rightAnchor),
-            picker.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+         
+            button.topAnchor.constraint(equalTo: self.topAnchor),
+            button.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            button.leadingAnchor.constraint(equalTo: self.centerXAnchor),
+            button.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -45,6 +56,6 @@ class CustomMenuComponent: UIView{
     
     
     func retrieveValue() -> Int{
-        return picker.selectedRow(inComponent: 0)
+        return selected
     }
 }
