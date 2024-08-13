@@ -21,13 +21,14 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftDithering",
-            dependencies: [],
+            resources: [.process("Resources/bayer8x8.png")],
             cSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
         ),
 
         .testTarget(
             name: "SwiftDitheringTests",
             dependencies: ["SwiftDithering"],
+            resources: [.process("Resources/bayer8x8.png")],
             swiftSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
         ),
     ]

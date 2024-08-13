@@ -5,19 +5,30 @@ import CoreImage
 public class OrderedDithering: CIFilter {
     @objc dynamic var inputImage: CIImage?
     /// The matrix to be used, represents 2ˆn
-    @objc dynamic var matrixSize: Int = 3
+    @objc dynamic var matrixSize: Int = 1
     /// How much to downsample, also represents 2ˆn
-    @objc dynamic var downsampleFactor: Int = 2
-    @objc dynamic var spread: Float = 0.5
+    @objc dynamic var downsampleFactor: Int = 1
+    @objc dynamic var spread: Float = 0
     @objc dynamic var hasColor: Bool = true
-    @objc dynamic var numberOfBits: Int = 2
+    @objc dynamic var numberOfBits: Int = 1
+    
+    private static var bayer8x8: CIImage {
+        guard let url = Bundle.module.url(forResource: "bayer8x8", withExtension: "png"),
+              let ciBase = CIImage(contentsOf: url) else {
+            fatalError("Error loading Bayer 8x8 texture!")
+        }
+        return ciBase
+    }
     
     
     public override var outputImage: CIImage? {
+        
         guard var input = inputImage else { return nil }
-        let downsampleFactor = clamp(min: 1, value: downsampleFactor, max: 63)
+        var out: CIImage? = input.copy() as! CIImage?
+        
+        let downsampleFactor = exp2(Double(clamp(min: 1, value: downsampleFactor, max: 63)))
         let callback: CIKernelROICallback = {_,rect in
-            return .zero
+            return  rect
         }
         
         if !hasColor {
@@ -27,30 +38,52 @@ public class OrderedDithering: CIFilter {
             
             filter?.setValue(1.0, forKey: "inputIntensity")
                 
-            guard let out = filter?.outputImage else { return nil }
-            input = out
+            guard let temp = filter?.outputImage else { return nil }
+            out = temp
         }
         
         if downsampleFactor > 1 {
             let filter = CIFilter(name: "CILanczosScaleTransform")
-            filter?.setValue(input, forKey: "inputImage")
-            let scale = 1.0 / Float(1 << downsampleFactor)
-            filter?.setValue(scale , forKey: "inputScale")
-            guard let out = filter?.outputImage else { return nil }
-            input = out
+       
+           // let scale = 1.0 / downsampleFactor;
+            let desiredSize = CGSize(width: input.extent.width / downsampleFactor, height: input.extent.height / downsampleFactor)
+            
+            let scale = desiredSize.height / input.extent.height
+            let aspectRatio = desiredSize.width / (input.extent.width * scale)
+            
+            filter?.setValue(out, forKey: kCIInputImageKey)
+            filter?.setValue(scale , forKey: kCIInputScaleKey)
+            filter?.setValue(aspectRatio, forKey: kCIInputAspectRatioKey)
+            guard let temp = filter?.outputImage else { return nil }
+            out = temp
         }
-        
+//        
         
         let kernel = CIKernel(source: bayerMatrixCalculation + orderedKernel)!
         //sampler s, int factor, float spread, int numberOfBits
-        let out = kernel.apply(extent: input.extent, roiCallback: callback, arguments: [
-            input,
+        out = kernel.apply(extent: out!.extent, roiCallback: callback, arguments: [
+            out,
+            OrderedDithering.bayer8x8,
             matrixSize,
             spread,
             numberOfBits
         ])
-        let upscale = CGAffineTransform(scaleX: CGFloat(1 << downsampleFactor), y: CGFloat(1 << downsampleFactor))
-        return  out?.transformed(by: upscale)
+        
+        if downsampleFactor > 1 {
+            let filter = CIFilter(name: "CILanczosScaleTransform")
+       
+            let desiredSize = CGSize(width: input.extent.width, height: input.extent.height)
+            
+            let scale = desiredSize.height / out!.extent.height
+            let aspectRatio = desiredSize.width / (out!.extent.width * scale)
+            
+            filter?.setValue(out, forKey: kCIInputImageKey)
+            filter?.setValue(scale , forKey: kCIInputScaleKey)
+            filter?.setValue(aspectRatio, forKey: kCIInputAspectRatioKey)
+            guard let temp = filter?.outputImage else { return nil }
+            out = temp
+        }
+        return out
     }
 }
 
