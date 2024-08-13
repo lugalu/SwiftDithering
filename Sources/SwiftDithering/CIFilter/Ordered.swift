@@ -5,10 +5,10 @@ import CoreImage
 public class OrderedDithering: CIFilter {
     @objc dynamic var inputImage: CIImage?
     /// The matrix to be used, represents 2ˆn
-    @objc dynamic var matrixSize: Int = 3
+    @objc dynamic var matrixSize: Int = 1
     /// How much to downsample, also represents 2ˆn
-    @objc dynamic var downsampleFactor: Int = 1
-    @objc dynamic var spread: Float = 1
+    @objc dynamic var downsampleFactor: Int = 0
+    @objc dynamic var spread: Float = 0.125
     @objc dynamic var hasColor: Bool = true
     @objc dynamic var numberOfBits: Int = 2
     
