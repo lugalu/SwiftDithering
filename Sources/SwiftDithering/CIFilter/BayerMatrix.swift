@@ -23,7 +23,7 @@ int getQuadrant(int x, int y, int half_n){
 }
 
 int getFactor(int n){
-    return int(pow(2.0,float(n)));
+    return int(exp2(float(n)));
 }
 
 int getBayerValue(int x, int y, int factor, mat4 matrix){

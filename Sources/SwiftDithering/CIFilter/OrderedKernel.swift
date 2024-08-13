@@ -5,10 +5,10 @@ import Foundation
 let orderedKernel: String = """
 
 vec3 roundF(vec3 color) {
-    vec3 colorOut = color;
-    colorOut.r = colorOut.r < 0.5 ? floor(colorOut.r) : ceil(colorOut.r);
-    colorOut.g = colorOut.g < 0.5 ? floor(colorOut.g) : ceil(colorOut.g);
-    colorOut.b = colorOut.b < 0.5 ? floor(colorOut.b) : ceil(colorOut.b);
+    vec3 colorOut = color ;
+    colorOut.r = floor(colorOut.r) + floor(mod(colorOut.r,1.0) + 0.5);
+    colorOut.g = floor(colorOut.g) + floor(mod(colorOut.g,1.0) + 0.5);
+    colorOut.b = floor(colorOut.b) + floor(mod(colorOut.b,1.0) + 0.5);
     return colorOut;
 }
 
@@ -17,20 +17,18 @@ kernel float4 bayer(sampler s, sampler matrix, float f, float spread, float n ) 
     int factor = int(f);
     int numberOfBits = int(n);
     float2 uv = destCoord();
-    float4 extent = samplerExtent(s);
-    int matrixValue = getMatrixValue(int(extent.z), int(extent.w), factor, matrix);
 
-    float matrixFactor = pow(2.0, float(factor));
-    float threshold = float(matrixValue) / 255.0;
-    threshold *= (1.0 / matrixFactor);
+    float matrixFactor = pow(f, 2.0);
+    float threshold = float(getMatrixValue(int(uv.x), int(uv.y), factor, matrix));
+    threshold *= (1.0/pow(matrixFactor,2.0));
     threshold -= 0.5;
 
     float deviation = spread * threshold;
-    float levels = exp2(n) - 1.0;
+    float levels = exp2(n);
     float4 color = sample(s,samplerCoord(s)).rgba;
-    color.rgb += float3(deviation);
-    color.rgb = roundF(color.rgb * levels) / levels;
+    color.rgb += deviation;
+    color.rgb = roundF(color.rgb * levels) / levels ;
     
-    return color;
+    return clamp(color, 0.0, 1.0);
 }
 """
