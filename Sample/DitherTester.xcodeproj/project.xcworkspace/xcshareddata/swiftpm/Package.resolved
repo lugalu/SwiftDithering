@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/lugalu/SwiftDithering",
       "state" : {
-        "branch" : "feat/CIFilter",
-        "revision" : "071215035c68ad190230a34ae04649ef01369e7b"
+        "branch" : "main",
+        "revision" : "30b55e1456fa59c93cb2d5084e787e6c7bd14309"
       }
     }
   ],

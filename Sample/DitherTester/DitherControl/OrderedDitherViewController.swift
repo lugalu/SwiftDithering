@@ -15,7 +15,7 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        matrixSelector.configure(withTitle: "Bayer Matrix Size", menuContent: ["bayer 2x2", "bayer 4x4", "bayer 8x8"])
+        matrixSelector.configure(withTitle: "Bayer Matrix Size", menuContent: ["Bayer 2x2", "Bayer 4x4", "Bayer 8x8", "Clustered Dots", "Central White Point", "Balanced White Point", "Diagonal Ordered"])
 
         isGPUSelector.configure(withTitle: "Use GPU?")
         isGPUSelector.toggle.setOn(true, animated: true)
@@ -25,7 +25,7 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
         
         inversionSelector.configure(withTitle: "Should Invert")
     
-        spreadSlider.configure(withTitle: "Spread", minValue: 0.0, maxValue: 1.0, roundValue: 4.0)
+        spreadSlider.configure(withTitle: "Spread", minValue: 0.0, maxValue: 1.0, roundValue: 8.0)
         numberOfBitsSlider.configure(withTitle: "Number Of Bits", minValue: 1, maxValue: 16)
         downscaleSlider.configure(withTitle: "Downscale(2ˆn)", minValue: 0.0, maxValue: 16)
         setupUI()
@@ -33,19 +33,24 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
     }
     
     func retrivedDitheredImage(for image: UIImage?) throws -> UIImage? {
+        guard let image = image else { return nil }
+        let usesGPU = isGPUSelector.retrieveValue()
         var ditherType: OrderedDitheringTypes
         let isInverted = inversionSelector.retrieveValue()
-        let isColored = !isColoredSelector.retrieveValue()
-        let usesGPU = isGPUSelector.retrieveValue()
+        let isColored = isColoredSelector.retrieveValue()
         let spread = spreadSlider.retrieveValue()
         let numberOfBits = Int(numberOfBitsSlider.retrieveValue())
         let downscaleFactor = Int(downscaleSlider.retrieveValue())
         
-        switch (matrixSelector.retrieveValue()){
+        var matrixSize: Int = 3
+        
+        switch matrixSelector.retrieveValue() {
         case 0:
             ditherType = .bayer(size: .bayer2x2)
+            matrixSize = 1
         case 1:
             ditherType = .bayer(size: .bayer4x4)
+            matrixSize = 2
         case 2:
             ditherType = .bayer(size: .bayer8x8)
         case 3:
@@ -61,14 +66,44 @@ class OrderedDitherViewController: UIViewController, DitherControlProtocol {
         }
         
         if usesGPU {
-            let filter = OrderedDithering()
-            let img = image?.ciImage ?? CIImage(image: image ?? UIImage(systemName: "pencil")! )
+            var inputCIImage: CIImage
             
-            filter.setValue(img, forKey: "inputImage")
-            guard let ciImg = filter.outputImage else { return nil }
-            return UIImage(ciImage: ciImg)
+            if let ci = image.ciImage {
+                inputCIImage = ci
+            }else {
+                guard let cgImg = image.cgImage else { return nil }
+                inputCIImage = CIImage(cgImage: cgImg)
+            }
+            
+            let filter = OrderedDithering()
+            filter.setValuesForKeys([
+                "inputImage": inputCIImage,
+                "ditherType": ditherType.getCIFilterID(),
+                "matrixSize": matrixSize,
+                "downsampleFactor": downscaleFactor,
+                "spread": spread,
+                "hasColor": isColored,
+                "numberOfBits": numberOfBits
+            ])
+            
+            guard let ciImg = filter.outputImage,
+                  let cgImage = convertCIImageToCGImage(inputImage: ciImg) else {
+                return nil
+            }
+            
+            return UIImage(cgImage: cgImage)
         }
-        return try image?.applyOrderedDither(withType: ditherType, isInverted: isInverted, isGrayScale: isColored, spread: spread, numberOfBits: numberOfBits, downSampleFactor: downscaleFactor)
+        return try image.applyOrderedDither(withType: ditherType, isInverted: isInverted, isGrayScale: !isColored, spread: spread, numberOfBits: numberOfBits, downSampleFactor: downscaleFactor)
+    }
+
+
+    
+    private func convertCIImageToCGImage(inputImage: CIImage) -> CGImage? {
+        let context = CIContext(options: nil)
+        if let cgImage = context.createCGImage(inputImage, from: inputImage.extent) {
+            return cgImage
+        }
+        return nil
     }
 }
 
@@ -197,14 +232,6 @@ extension OrderedDitherViewController: UIPickerViewDelegate, UIPickerViewDataSou
         default:
             return nil
         }
-        
-        /*
-         case bayer(size: BayerSizes)
-         case clusteredDots
-         case centralWhitePoint
-         case balancedCenteredPoint
-         case diagonalOrdered
-        */
     }
     
     

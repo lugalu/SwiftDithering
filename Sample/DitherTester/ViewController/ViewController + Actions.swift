@@ -16,6 +16,7 @@ extension ViewController{
     }
     
     @objc func applyDither(){
+        applyButton.isEnabled = false
         Task{
             do{
                 let index = self.ditherSelector.selectedSegmentIndex
@@ -23,9 +24,13 @@ extension ViewController{
                 
                 let newImage = try await ditherer.retrivedDitheredImage(for: self.imageView.image)
                 DispatchQueue.main.async {
+                    self.applyButton.isEnabled = true
                     self.imageView.image = newImage
                 }
             }catch{
+                DispatchQueue.main.async {
+                    self.applyButton.isEnabled = true
+                }
                 print("error: \(error.localizedDescription)")
             }
         }

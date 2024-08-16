@@ -21,7 +21,7 @@ class ViewController: UIViewController {
         imgView.backgroundColor = .clear
         imgView.layer.cornerRadius = 5
         imgView.layer.masksToBounds = true
-        imgView.layer.borderColor = UIColor.gray.cgColor
+        imgView.layer.borderColor = UIColor.tintColor.cgColor
         imgView.layer.borderWidth = 1
         imgView.isUserInteractionEnabled = true
         

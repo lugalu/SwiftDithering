@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		090041C42C700A3C00710ED1 /* SwiftDithering in Frameworks */ = {isa = PBXBuildFile; productRef = 090041C32C700A3C00710ED1 /* SwiftDithering */; };
 		0905F2A82A7C6DF100F3AECE /* ViewController + Gallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0905F2A72A7C6DF100F3AECE /* ViewController + Gallery.swift */; };
 		0905F2AC2A7C774500F3AECE /* DitherControlProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0905F2AB2A7C774500F3AECE /* DitherControlProtocol.swift */; };
 		0905F2AE2A7C77BC00F3AECE /* OrderedDitherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0905F2AD2A7C77BC00F3AECE /* OrderedDitherViewController.swift */; };
@@ -19,7 +20,7 @@
 		09204A842A6DE1B8002E8D10 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09204A832A6DE1B8002E8D10 /* ViewController.swift */; };
 		09204A892A6DE1BA002E8D10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09204A882A6DE1BA002E8D10 /* Assets.xcassets */; };
 		09204A8C2A6DE1BA002E8D10 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09204A8A2A6DE1BA002E8D10 /* LaunchScreen.storyboard */; };
-		0946A6B22C6994BD009E4571 /* SwiftDithering in Frameworks */ = {isa = PBXBuildFile; productRef = 0946A6B12C6994BD009E4571 /* SwiftDithering */; };
+		0946A6B52C6995B6009E4571 /* SwiftDithering in Frameworks */ = {isa = PBXBuildFile; productRef = 0946A6B42C6995B6009E4571 /* SwiftDithering */; };
 		096747622A82FC300005F844 /* CustomToggleComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096747612A82FC300005F844 /* CustomToggleComponent.swift */; };
 		099CC8F42A8EE0D100441B77 /* ImageZoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099CC8F32A8EE0D100441B77 /* ImageZoomViewController.swift */; };
 		09A44CA52A7DC13600615C77 /* CustomMenuComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A44CA42A7DC13600615C77 /* CustomMenuComponent.swift */; };
@@ -58,7 +59,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0946A6B22C6994BD009E4571 /* SwiftDithering in Frameworks */,
+				0946A6B52C6995B6009E4571 /* SwiftDithering in Frameworks */,
+				090041C42C700A3C00710ED1 /* SwiftDithering in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,7 +175,8 @@
 			);
 			name = DitherTester;
 			packageProductDependencies = (
-				0946A6B12C6994BD009E4571 /* SwiftDithering */,
+				0946A6B42C6995B6009E4571 /* SwiftDithering */,
+				090041C32C700A3C00710ED1 /* SwiftDithering */,
 			);
 			productName = DitherTester;
 			productReference = 09204A7C2A6DE1B8002E8D10 /* DitherTester.app */;
@@ -204,7 +207,7 @@
 			);
 			mainGroup = 09204A732A6DE1B8002E8D10;
 			packageReferences = (
-				0946A6B02C6994BD009E4571 /* XCRemoteSwiftPackageReference "SwiftDithering" */,
+				090041C22C700A3C00710ED1 /* XCRemoteSwiftPackageReference "SwiftDithering" */,
 			);
 			productRefGroup = 09204A7D2A6DE1B8002E8D10 /* Products */;
 			projectDirPath = "";
@@ -468,20 +471,24 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0946A6B02C6994BD009E4571 /* XCRemoteSwiftPackageReference "SwiftDithering" */ = {
+		090041C22C700A3C00710ED1 /* XCRemoteSwiftPackageReference "SwiftDithering" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lugalu/SwiftDithering";
 			requirement = {
-				branch = feat/CIFilter;
+				branch = main;
 				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0946A6B12C6994BD009E4571 /* SwiftDithering */ = {
+		090041C32C700A3C00710ED1 /* SwiftDithering */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0946A6B02C6994BD009E4571 /* XCRemoteSwiftPackageReference "SwiftDithering" */;
+			package = 090041C22C700A3C00710ED1 /* XCRemoteSwiftPackageReference "SwiftDithering" */;
+			productName = SwiftDithering;
+		};
+		0946A6B42C6995B6009E4571 /* SwiftDithering */ = {
+			isa = XCSwiftPackageProductDependency;
 			productName = SwiftDithering;
 		};
 /* End XCSwiftPackageProductDependency section */
