@@ -18,7 +18,7 @@ kernel float4 bayer(sampler s, sampler matrix, float divider, float f, float spr
     float2 uv = destCoord();
 
     float threshold = float(getMatrixValue(int(uv.x), int(uv.y), int(divider), factor, matrix));
-    threshold *= (1.0/pow(exp2(f),2.0));
+    threshold *= (1.0/pow(divider,2.0));
     threshold -= 0.5;
 
     float deviation = spread * threshold;

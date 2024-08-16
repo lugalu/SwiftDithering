@@ -45,7 +45,16 @@ public class OrderedDithering: CIFilter {
         
         if downsampleFactor > 0 { out = downsample(image: out, factor: downsampleFactor) }
         
-        let (matrix, divider) = getMatrix()
+        var (matrix, divider) = getMatrix()
+        
+        switch matrixSize {
+        case 1:
+            divider = 2
+        case 2:
+            divider = 4
+        default:
+            break
+        }
         //sampler s, int factor, float spread, int numberOfBits
         out = OrderedDithering.kernel.apply(extent: out!.extent, roiCallback: callback, arguments: [
             out!,
