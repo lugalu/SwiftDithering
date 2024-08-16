@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftDithering",
-    platforms: [.iOS(.v13)],
+    platforms: [.iOS(.v13), .macOS(.v10_15)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -21,9 +21,27 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftDithering",
-            dependencies: []),
+            resources: [
+                .process("Resources/bayer8x8.png"),
+                .process("Resources/balancedCenteredPoint6x6.png"),
+                .process("Resources/centralWhitePoint6x6.png"),
+                .process("Resources/clusteredDots6x6.png"),
+                .process("Resources/diagonalOrdered8x8.png")
+            ],
+            cSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
+        ),
+
         .testTarget(
             name: "SwiftDitheringTests",
-            dependencies: ["SwiftDithering"]),
+            dependencies: ["SwiftDithering"],
+            resources: [
+                .process("Resources/bayer8x8.png"),
+                .process("Resources/balancedCenteredPoint6x6.png"),
+                .process("Resources/centralWhitePoint6x6.png"),
+                .process("Resources/clusteredDots6x6.png"),
+                .process("Resources/diagonalOrdered8x8.png")
+                       ],
+            swiftSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
+        ),
     ]
 )

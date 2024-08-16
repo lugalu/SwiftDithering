@@ -1,6 +1,6 @@
 //  Created by Lugalu on 30/07/23.
 
-import UIKit
+import Foundation
 
 /**
  Assigner for Floyd-Steingber operations this rules all the Floyg specific math from assigning new colors to applying the specific matrix for this stype of error difusion

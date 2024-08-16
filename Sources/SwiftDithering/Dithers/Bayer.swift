@@ -5,6 +5,7 @@ import Foundation
 /**
  This enum contains all the information regarding Bayer matrices from size to matrix values.
  */
+@objc
 public enum BayerSizes: Int{
     case bayer2x2 = 2
     case bayer4x4 = 4

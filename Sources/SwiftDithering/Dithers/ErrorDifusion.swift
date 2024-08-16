@@ -1,4 +1,5 @@
 //  Created by Lugalu on 18/07/23.
+#if os(iOS)
 
 import UIKit
 
@@ -138,3 +139,5 @@ internal func genericErrorDifusion(imageData: inout UnsafeMutablePointer<UInt8>,
          #endif
 
 }
+
+#endif

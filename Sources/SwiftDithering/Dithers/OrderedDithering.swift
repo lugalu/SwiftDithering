@@ -1,6 +1,5 @@
 //  Created by Lugalu on 18/07/23.
-
-import UIKit
+import Foundation
 
 public enum OrderedDitheringTypes{
     case bayer(size: BayerSizes)
@@ -75,6 +74,11 @@ public enum OrderedDitheringTypes{
     }
     
 }
+#if os(iOS)
+
+import UIKit
+
+
 
 public extension UIImage {
     
@@ -198,4 +202,6 @@ func genericOrderedDither(imageData: inout UnsafeMutablePointer<UInt8>,
 #endif
     
 }
+
+#endif
 

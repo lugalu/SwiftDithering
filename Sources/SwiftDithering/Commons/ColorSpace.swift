@@ -1,7 +1,7 @@
 //  Created by Lugalu on 30/07/23.
 
 import Accelerate
-import UIKit
+import CoreGraphics
 
 /**
     Converts image to the GrayScale format accepted by Quartz2D containing 16 bits in total (color(0-255) and alpha (0-255))

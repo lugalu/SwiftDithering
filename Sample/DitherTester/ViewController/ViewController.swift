@@ -46,11 +46,7 @@ class ViewController: UIViewController {
         return btn
     }()
     
-    let revertButton: UIButton = {
-        let btn = CustomButton(configuration: .filled())
-        btn.configure(withTitle: "Restore To Pre Dither", for: .normal)
-        return btn
-    }()
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -59,7 +55,6 @@ class ViewController: UIViewController {
         setupPageController()
         imageView.image = defaultImage
         applyButton.addTarget(self, action: #selector(applyDither), for: .touchUpInside)
-        revertButton.addTarget(self, action: #selector(removeDither), for: .touchUpInside)
         
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onImageViewTapped))

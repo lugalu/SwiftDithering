@@ -110,10 +110,7 @@ final class GeneralMathTests: XCTestCase {
         XCTAssertEqual(result.g, Int(colors.g))
         XCTAssertEqual(result.b, Int(colors.b))
         
-    }
-    
-    
-    
+    }    
 }
 
 

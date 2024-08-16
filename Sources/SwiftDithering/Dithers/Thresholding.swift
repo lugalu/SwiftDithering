@@ -1,5 +1,5 @@
 //Created by Lugalu on 20/08/23.
-
+#if os(iOS)
 import UIKit
 
 public enum ThresholdTypes{
@@ -126,34 +126,4 @@ func genericThresholding(_ imageData: inout UnsafeMutablePointer<UInt8>,
     }
 }
 
-
-/*
- func uniformQuantization(image: UIImage, numLevels: Int) -> UIImage? {
-     guard let inputCGImage = image.cgImage else {
-         return nil
-     }
-     
-     let buffer = UnsafeBufferPointer<UInt8>(start: quantizedData.assumingMemoryBound(to: UInt8.self), count: width * height)
-     
-     let minIntensity = buffer.min() ?? 0
-     let maxIntensity = buffer.max() ?? 255
-     let intensityRange = Double(maxIntensity - minIntensity)
-     let intervalSize = intensityRange / Double(numLevels)
-     
-     var quantizedImagePixels = [UInt8](repeating: 0, count: width * height)
-     
-     for i in 0..<buffer.count {
-         let originalIntensity = Double(buffer[i])
-         let quantizedIntensity = UInt8(round((originalIntensity - Double(minIntensity)) / intervalSize) * intervalSize + Double(minIntensity))
-         quantizedImagePixels[i] = quantizedIntensity
-     }
-     
-     let quantizedCGImage = quantizedImagePixels.withUnsafeBytes { ptr in
-         return CGDataProvider(data: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self))!
-     }
-     
-     return UIImage(cgImage: quantizedCGImage, scale: image.scale, orientation: image.imageOrientation)
- }
- 
- 
- */
+#endif
