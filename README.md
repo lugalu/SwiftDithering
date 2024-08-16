@@ -22,7 +22,9 @@ The implementation is done via the Accelerate framework.
 <br>
 
 ## Usage
-To use the library you will have some access points based on UIImages
+To use the library you will have some access points based on UIImages and CIFilter  
+
+CPU:
 ```Swift
 import SwiftDithering
 
@@ -43,8 +45,24 @@ function yourFunction() {
   
 }
 ```
-the functions also have more accessible parameters, but for simplicity, this example does not, For more details check the Sample/DitherTester/DitherControl and go to any of the retrivedDitheredImages
+the functions also have more accessible parameters, but for simplicity, this example does not, For more details check the Sample/DitherTester/DitherControl and go to any of the retrivedDitheredImages  
 
+GPU:
+```Swift
+import SwiftDithering
+
+function yourFunction() {
+    let filter = OrderedDithering()
+    filter.setValuesForKeys([
+        "inputImage": inputCIImage,
+        "ditherType": ditherType.getCIFilterID(),
+        ...
+    ])
+
+   return filter?.outputImage
+}
+```
+I recommend transforming the outputImage to CG before using in IOS, same thing for the respective variants on mac.  
 
 ## Plans And Features
 Since is my first time doing something like this a lot of the code is prone to change, I will try to do it in the most non-disruptive way but I cannot guarantee it will work in every single version.
@@ -59,22 +77,10 @@ Currently Features:
  - Clustered Dots
  - Central White point
  - Balanced Centered point
-- Diagonal clustered
+ - Diagonal clustered
+ - All Ordered Dithers are Now CPU and GPU supported.  
  
- <br>
- 
-Planned Dithers:
- - No Extra dither for now, since I don't know any other technique
- 
-<br>
-
-Maybe Will be added:
- - CIFilter, the lack of Obj-C knowledge prevents me from doing it for now.
- 
- 
-<br>
-
  ## Considerations
-* Since all runs on the CPU they are calculated as sequential and are expensive so tasks and loadings are needed for the user UI.
+* The CPU variants are calculated as sequential and are expensive so tasks and loadings are needed for the user UI.
 * Feel free to suggest performance improvements and report any bug that you may find while using this lib
 * These dithers are based on the [matlab article stored in the archive.today](https://archive.ph/71e9G) and other research
