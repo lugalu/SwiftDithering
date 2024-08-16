@@ -27,8 +27,11 @@ public class OrderedDithering: CIFilter {
     @objc dynamic var matrixSize: Int = 3
     /// How much to downsample, also represents 2ˆn
     @objc dynamic var downsampleFactor: Int = 0
+    /// How much the matrix influence the image, in gpu I recomend near 0.125
     @objc dynamic var spread: Float = 0.125
+    /// if the image should be made gray
     @objc dynamic var hasColor: Bool = true
+    /// number of bits available to the pixels.
     @objc dynamic var numberOfBits: Int = 2
   
     private let callback: CIKernelROICallback = {_,rect in
