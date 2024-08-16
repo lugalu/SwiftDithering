@@ -26,7 +26,7 @@ let package = Package(
                 .process("Resources/balancedCenteredPoint6x6.png"),
                 .process("Resources/centralWhitePoint6x6.png"),
                 .process("Resources/clusteredDots6x6.png"),
-                .process("Resources/DiagonalOrdered.png")
+                .process("Resources/diagonalOrdered8x8.png")
             ],
             cSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
         ),
@@ -39,7 +39,7 @@ let package = Package(
                 .process("Resources/balancedCenteredPoint6x6.png"),
                 .process("Resources/centralWhitePoint6x6.png"),
                 .process("Resources/clusteredDots6x6.png"),
-                .process("Resources/DiagonalOrdered.png")
+                .process("Resources/diagonalOrdered8x8.png")
                        ],
             swiftSettings: [.define("CI_SILENCE_GL_DEPRECATION")]
         ),

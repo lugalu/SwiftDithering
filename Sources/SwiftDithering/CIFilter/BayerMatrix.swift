@@ -27,12 +27,11 @@ int getBayerValue(int x, int y, int factor, mat2 matrix){
     return int(value);
 }
 
-int getMatrixValue(int x, int y, int n, sampler bigMatrix){
-    int factor = getFactor(n);
+int getMatrixValue(int x, int y, int d, int n, sampler bigMatrix){
 
     if (n == 3){
-        float f = float(factor);
-        float2 uv = samplerTransform(bigMatrix,float2(x % 8, y % 8));
+        int divider = int(d);
+        float2 uv = samplerTransform(bigMatrix,float2(x % d, y % d));
         int retrivedValue = int(sample(bigMatrix, uv).r * 255.0);
         return retrivedValue;
     }

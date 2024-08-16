@@ -1,7 +1,5 @@
 //  Created by Lugalu on 18/07/23.
-#if os(iOS)
-
-import UIKit
+import Foundation
 
 public enum OrderedDitheringTypes{
     case bayer(size: BayerSizes)
@@ -76,6 +74,11 @@ public enum OrderedDitheringTypes{
     }
     
 }
+#if os(iOS)
+
+import UIKit
+
+
 
 public extension UIImage {
     

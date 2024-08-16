@@ -12,12 +12,12 @@ vec3 roundF(vec3 color) {
     return colorOut;
 }
 
-kernel float4 bayer(sampler s, sampler matrix, float f, float spread, float n ) {
+kernel float4 bayer(sampler s, sampler matrix, float divider, float f, float spread, float n ) {
 
     int factor = int(f);
     float2 uv = destCoord();
 
-    float threshold = float(getMatrixValue(int(uv.x), int(uv.y), factor, matrix));
+    float threshold = float(getMatrixValue(int(uv.x), int(uv.y), int(divider), factor, matrix));
     threshold *= (1.0/pow(exp2(f),2.0));
     threshold -= 0.5;
 
