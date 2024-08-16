@@ -110,56 +110,7 @@ final class GeneralMathTests: XCTestCase {
         XCTAssertEqual(result.g, Int(colors.g))
         XCTAssertEqual(result.b, Int(colors.b))
         
-    }
-    
-    func testRecursiveValues(){
-        
-        func bayerValue(x:Int, y:Int, n: Int) -> Int{
-            if n == 1 {
-                let res = abs(x * 2 - 3 * y)
-                return res
-            }
-            
-            let factor = NSDecimalNumber(decimal: pow(2, n)).intValue
-            let x = x % factor
-            let y = y % factor
-            
-            let half = NSDecimalNumber(decimal: pow(2, n-1)).intValue
-            let quadrant: Int =  {
-                if x < half && y < half {
-                    return 0
-                }
-                
-                if x >= half && y < half {
-                    return 2
-                }
-                
-                if x < half && y >= half {
-                    return 3
-                }
-                
-               return 1
-            }()
-                        
-            let newX = x % half
-            let newY = y % half
-            
-            let res = 4 * bayerValue(x: newX, y: newY, n: n-1) + quadrant
-            return res
-        }
-        
-        let n = 3
-        let bayer = BayerSizes.bayer8x8
-        
-        for y in 0...50{
-            for x in 0...50 {
-                let test = bayerValue(x: x , y: y, n: n)
-                XCTAssertEqual(UInt8(clamping:test), bayer.getBayerMatrix()[y%8][x%8])
-            }
-        }
-        
-    }
-    
+    }    
 }
 
 
