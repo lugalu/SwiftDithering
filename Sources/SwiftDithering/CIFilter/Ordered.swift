@@ -3,7 +3,7 @@
 import CoreImage
 
 public extension OrderedDitheringTypes {
-    public func getCIFilterID() -> Int {
+    func getCIFilterID() -> Int {
         switch self {
         case .bayer(_):
             return 1
